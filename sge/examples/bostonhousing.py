@@ -3,11 +3,14 @@ from sge.parameters import params
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 from numpy import cos, sin
 
+
+
 def drange(start, stop, step):
     r = start
     while r < stop:
         yield r
         r += step
+
 
 class BostonHousing():
     def __init__(self, run=0, has_test_set=True, invalid_fitness=9999999):
@@ -18,7 +21,6 @@ class BostonHousing():
         self.has_test_set = has_test_set
         self.read_dataset()
         self.calculate_rrse_denominators()
-
 
     def read_dataset(self):
         dataset = []
@@ -56,7 +58,7 @@ class BostonHousing():
             try:
                 output = eval(individual, globals(), {"x": case[:-1]})
                 pred_error += (target - output)**2
-            except (SyntaxError, ValueError, OverflowError, MemoryError, FloatingPointError):
+            except (ValueError, OverflowError, SyntaxError):
                 return self.__invalid_fitness
         return pred_error
 
