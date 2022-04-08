@@ -2,7 +2,6 @@ import copy
 import random
 import sge.grammar as grammar
 
-
 def mutate(p, pmutation):
     p = copy.deepcopy(p)
     p['fitness'] = None
@@ -15,13 +14,29 @@ def mutate(p, pmutation):
         for position_to_mutate in range(0, mapped):
             if random.random() < pmutation:
                 current_value = p['genotype'][at_gene][position_to_mutate]
-                choices = []
+                # codon = random.random()
+                # gaussian mutation
+                codon = random.gauss(current_value[1], 0.5)
+                codon = min(codon,1.0)
+                codon = max(codon,0.0)
+                expansion_possibility = 0
                 if p['tree_depth'] >= grammar.get_max_depth():
-                    choices = grammar.get_non_recursive_options()[nt]
+                    non_recursive_prods, prob_non_recursive = grammar.get_non_recursive_productions(nt)    
+                    prob_aux = 0.0
+                    for index, option in non_recursive_prods:
+                        new_prob = (option[1] * 1.0) / prob_non_recursive
+                        prob_aux += new_prob
+
+                        if codon < prob_aux:
+                            expansion_possibility = index
+                            break
                 else:
-                    choices = list(range(0, size_of_genes[nt]))
-                    choices.remove(current_value)
-                if len(choices) == 0:
-                    choices = range(0, size_of_genes[nt])
-                p['genotype'][at_gene][position_to_mutate] = random.choice(choices)
+                    prob_aux = 0.0
+                    for index, option in enumerate(grammar.get_dict()[nt]):
+                        prob_aux += option[1]
+                        if codon < prob_aux:
+                            expansion_possibility = index
+                            break
+                  
+                p['genotype'][at_gene][position_to_mutate] = [expansion_possibility, codon]
     return p
