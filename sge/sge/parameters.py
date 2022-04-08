@@ -21,6 +21,8 @@ params = {'PARAMETERS': None,
           'VERBOSE': True,
           'MIN_TREE_DEPTH': 6,
           'MAX_TREE_DEPTH': 17,
+          'PROB_MUTATION_GRAMMAR': 0.05,
+          'NORMAL_DIST_SD': 0.5,
           }
 
 
@@ -94,7 +96,22 @@ def set_parameters(arguments):
                         dest='VERBOSE',
                         type=bool,
                         help='Turns on the verbose output of the program')
-
+    parser.add_argument('--prob_mutation_grammar',
+                        dest='PROB_MUTATION_GRAMMAR',
+                        type=float,
+                        help='Specifies the probability of occurring a mutation in the individual grammar')
+    parser.add_argument('--normal_dist_sd',
+                        dest='NORMAL_DIST_SD',
+                        type=float,
+                        help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution')
+    parser.add_argument('--min_tree_depth',
+                        dest='MIN_TREE_DEPTH',
+                        type=int,
+                        help='Specify the initialisation tree depth')
+    parser.add_argument('--max_tree_depth',
+                        dest='MAX_TREE_DEPTH',
+                        type=int,
+                        help='Specify the initialisation tree depth')
     # Parse command line arguments using all above information.
     args, _ = parser.parse_known_args(arguments)
 
