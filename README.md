@@ -20,7 +20,7 @@ The folder `examples/` contains the code for some benchmark problems used in GP.
 
 ### Support
 
-Any questions, comments or suggestion should be directed to Jessica Mégane ([naml@dei.uc.pt](mailto:naml@dei.uc.pt)) or Nuno Lourenço ([naml@dei.uc.pt](mailto:naml@dei.uc.pt)).
+Any questions, comments or suggestion should be directed to Jessica Mégane ([jessicac@dei.uc.pt](mailto:jessicac@dei.uc.pt)) or Nuno Lourenço ([naml@dei.uc.pt](mailto:naml@dei.uc.pt)).
 
 
 ## References
