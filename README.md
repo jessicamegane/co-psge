@@ -1,65 +1,34 @@
-# sge3: And Implementation of Dynamic Structured Grammatical Evolution in Python 3
+# Co-evolutionary Probabilistic Structured Grammatical Evolution python3 code
 
-Structured Grammatical Evolution (SGE) is a recent Grammatical Evolution (GE) variant that aims at addressing some of its locality and redundancy issues. The SGE distinctive feature is having a one-to-one correspondence between genes and non-terminals of the grammar being used. If you use this code, a reference to the following work would be greatly appreciated:
+Co-evolutionary Probabilistic Structured Grammatical Evolution (Co-PSGE) is an extension to Structured Grammatical Evolution (SGE).
 
-```
-@article{Lourenco2016,
- title={Unveiling the properties of structured grammatical evolution},
-  author={Louren{\c{c}}o, Nuno and Pereira, Francisco B and Costa, Ernesto},
-  journal={Genetic Programming and Evolvable Machines},
-  volume={17},
-  number={3},
-  pages={251--289},
-  year={2016},
-  publisher={Springer}
-}
+In Co-PSGE each individual in the population is composed by a grammar and a genotype, which is a list of dynamic lists, each corresponding to a non-terminal of the grammar containing real numbers that correspond to the probability of choosing a derivation rule. Each individual uses its own grammar to map the genotype into a program. During the evolutionary process both the grammar and the genotype are subject to variation operators.
 
-@incollection{lourencco2018structured,
-  title={Structured grammatical evolution: a dynamic approach},
-  author={Louren{\c{c}}o, Nuno and Assun{\c{c}}{\~a}o, Filipe and Pereira, Francisco B and Costa, Ernesto and Machado, Penousal},
-  booktitle={Handbook of Grammatical Evolution},
-  pages={137--161},
-  year={2018},
-  publisher={Springer}
-}
-```
+A more in-depth explanation of the method and an analysis of its performance can be found in the article, soon to be publicly available. If you want a pre-print version you can send us an e-mail.
 
-This project corresponds to a new implementation of the SGE engine. SGE has been criticised for the fact that we need to specify the maximum levels of recursion in order to remove it from the grammar beforehand. In this new version we specify the maximum tree depth (similarly to what happens in standard tree-based GP), and the algorithm adds the mapping numbers as required during the evolutionary search. Thus, we do not need to pre-process the grammar to remove the recursive productions. Additionally, we provide mechanisms and operators to ensure that the generated trees are always within the allowed limits.
-
-
-As in for the SGE framework we provide the implementations of some problems that we used to test the DSGE. Extending it to your own needs should be fairly easy. 
-
-
-When running the framework a folder called *dumps* will be created together with an additional one that corresponds
- to the experience. Inside, there will be directories for each run. Each run folder contains snapshots of the
-  population at a given generation, and a file called *progress_report.csv*,  which is updated during the
-   evolutionary run
-  . By default we take snapshots
-   of the population every iteration (SAVESTEP parameter in the configuration file). This can be changed, together with
-    all
-    the numeric values in the
-    *configs
-   * folder.
 
 ### Requirements
-Currently this codebase only works with python 3. 
-
-### Installation
-
-To be completed
+This code needs python3.5 or a newer version. More detail on the required libraries can be found in the `requirements.txt` file.
 
 ### Execution
 
-You can run the Symbolic Regression example like this:
+The folder `examples/` contains the code for some benchmark problems used in GP. To run, for example, Symbolic Regression, you can use the following command:
 
-```python -m examples.symreg --experiment_name dumps/example --seed 791021 --parameters parameters/standard.yml```
+```python3 -m examples.symreg --experiment_name dumps/example --seed 791021 --parameters parameters/standard.yml --grammars/regressiob.pybnf```
 
 
 
 ### Support
 
-Any questions, comments or suggestion should be directed to Nuno Lourenço ([naml@dei.uc.pt](mailto:naml@dei.uc.pt))
+Any questions, comments or suggestion should be directed to Jessica Mégane ([naml@dei.uc.pt](mailto:naml@dei.uc.pt)) or Nuno Lourenço ([naml@dei.uc.pt](mailto:naml@dei.uc.pt)).
 
-### Acknowledgments
 
-I am grateful to my advisors Francisco B. Pereira and Ernesto Costa for their guidance during my PhD. I am also grateful to Filipe Assunção and Joaquim Ferrer for their help and comments on the development of this framework. 
+## References
+
+O'Neill, M. and Ryan, C. "Grammatical Evolution: Evolutionary Automatic Programming in an Arbitrary Language", Kluwer Academic Publishers, 2003.
+
+Fenton, M., McDermott, J., Fagan, D., Forstenlechner, S., Hemberg, E., and O'Neill, M. PonyGE2: Grammatical Evolution in Python. arXiv preprint, arXiv:1703.08535, 2017.
+
+Lourenço, N., Assunção, F., Pereira, F. B., Costa, E., and Machado, P.. Structured Grammatical Evolution: A Dynamic Approach. In Handbook of Grammatical Evolution. Springer Int, 2018.
+
+Mégane, J., Lourenço, N., and Machado, P.. Probabilistic Grammatical Evolution. In Genetic Programming, Ting Hu, Nuno Lourenço, and Eric Medvet (Eds.). Springer International Publishing, Cham, 198–213, 2021.
