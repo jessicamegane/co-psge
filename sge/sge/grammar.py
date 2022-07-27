@@ -22,6 +22,7 @@ class Grammar:
         self.start_rule = None
         self.max_depth = None
         self.max_init_depth = None
+        self.mutation_prob = []
 
     def set_path(self, grammar_path):
         self.grammar_file = grammar_path
@@ -98,7 +99,10 @@ class Grammar:
         self.counter = dict.fromkeys(self.grammar.keys(),[])
         for k in self.counter.keys():
             self.counter[k] = [0] * len(self.grammar[k])
+        self.mutation_prob = [0.1] * len(self.grammar.keys())
 
+    def get_mutation_prob(self):
+        return self.mutation_prob
 
     def get_non_terminals(self):
         return self.ordered_non_terminals
@@ -156,6 +160,7 @@ class Grammar:
         expansion_symbols = self.grammar[symbol][expansion_possibility]
         depths = [current_depth]
         for sym in expansion_symbols[0]:
+
             if sym[1] != self.T:
                 depths.append(self.recursive_individual_creation(genome, sym[0], current_depth + 1))
         return max(depths)
@@ -315,6 +320,7 @@ ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
 python_filter = _inst.python_filter
 get_non_recursive_productions = _inst.get_non_recursive_productions
+get_mutation_prob = _inst.get_mutation_prob
 
 if __name__ == "__main__":
     random.seed(42)
