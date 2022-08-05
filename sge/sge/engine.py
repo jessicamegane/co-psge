@@ -144,7 +144,7 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             else:
                 ni = tournament(population, params['TSIZE'])
             
-            ni = mutationGrammar(ni)
+            # ni = mutationGrammar(ni)
             ni = mutate(ni, params['PROB_MUTATION'])
             new_population.append(ni)
 
