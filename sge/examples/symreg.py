@@ -1,5 +1,7 @@
+from cmath import isnan
 import random
-from numpy import cos, sin
+import numpy as np
+import math
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 
 
@@ -128,20 +130,22 @@ class SymbolicRegression():
         test_error = 0.0
         if individual is None:
             return None
+        try:
+            error = self.get_error(individual, self.__train_set)
+            error = _sqrt_( error /self.__RRSE_train_denominator)
 
-        error = self.get_error(individual, self.__train_set)
-        error = _sqrt_( error /self.__RRSE_train_denominator)
+            if error is None or math.isnan(error):
+                error = self.__invalid_fitness
 
-        if error is None:
-            error = self.__invalid_fitness
+            if self.__test_set is not None:
+                test_error = 0
+                test_error = self.get_error(individual, self.__test_set)
+                test_error = _sqrt_( test_error / float(self.__RRSE_test_denominator))
 
-        if self.__test_set is not None:
-            test_error = 0
-            test_error = self.get_error(individual, self.__test_set)
-            test_error = _sqrt_( test_error / float(self.__RRSE_test_denominator))
 
-        return error, {'generation': 0, "evals": 1, "test_error": test_error}
-
+            return error, {'generation': 0, "evals": 1, "test_error": test_error}
+        except RecursionError:
+            return self.__invalid_fitness, {'generation': 0, "evals": 1, "test_error": test_error}
 
 if __name__ == "__main__":
     import sge
