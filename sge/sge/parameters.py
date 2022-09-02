@@ -23,6 +23,7 @@ params = {'PARAMETERS': None,
           'MAX_TREE_DEPTH': 17,
           'PROB_MUTATION_GRAMMAR': 0.05,
           'NORMAL_DIST_SD': 0.5,
+          'GRAMMAR_PROBS': None
           }
 
 
@@ -76,6 +77,10 @@ def set_parameters(arguments):
                         dest='GRAMMAR',
                         type=str,
                         help='Specifies the path to the grammar file.')
+    parser.add_argument('--grammar_probs',
+                        dest='GRAMMAR_PROBS',
+                        type=str,
+                        help='Path to json file, with list of probabilities to each production rule.')
     parser.add_argument('--experiment_name',
                         dest='EXPERIMENT_NAME',
                         type=str,

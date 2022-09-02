@@ -49,6 +49,8 @@ def setup(parameters_file_path = None):
     logger.prepare_dumps()
     random.seed(params['SEED'])
     grammar.set_path(params['GRAMMAR'])
+    if params['GRAMMAR_PROBS'] is not None:
+        grammar.set_pcfg_path(params['GRAMMAR_PROBS'])
     grammar.read_grammar()
     grammar.set_max_tree_depth(params['MAX_TREE_DEPTH'])
     grammar.set_min_init_tree_depth(params['MIN_TREE_DEPTH'])

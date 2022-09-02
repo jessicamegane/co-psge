@@ -26,10 +26,14 @@ class Grammar:
         self.max_number_prod_rules = 0
         self.pcfg = None
         self.pcfg_mask = None
+        self.pcfg_path = None
         self.index_of_non_terminal = {}
 
     def set_path(self, grammar_path):
         self.grammar_file = grammar_path
+
+    def set_pcfg_path(self, pcfg_path):
+        self.pcfg_path = pcfg_path
 
     def get_non_recursive_options(self):
         return self.non_recursive_options
@@ -54,51 +58,51 @@ class Grammar:
         if self.grammar_file is None:
             raise Exception("You need to specify the path of the grammar file")
 
-        # TODO: fazer alterações para que ou leia um json ou wtv
-        # TODO: associar a variavel de max prod rules num nt
-        if self.grammar_file.endswith("json"):
-            with open(self.grammar_file) as f:
-                self.grammar = json.load(f)
-            # assumes that the first key of the dictionary is the axiom
-            self.start_rule = (list(self.grammar.keys())[0],"NT")
-            self.ordered_non_terminals = list(self.grammar.keys())
-        else:
-            with open(self.grammar_file, "r") as f:
-                for line in f:
-                    if not line.startswith("#") and line.strip() != "":
-                        if line.find(self.PRODUCTION_SEPARATOR):
-                            left_side, productions = line.split(self.RULE_SEPARATOR)
-                            left_side = left_side.strip()
-                            if not re.search(self.NT_PATTERN, left_side):
-                                raise ValueError("Left side not a non-terminal!")
-                            self.non_terminals.add(left_side)
-                            self.ordered_non_terminals.add(left_side)
-                            # assumes that the first rule in the file is the axiom
-                            if self.start_rule is None:
-                                self.start_rule = (left_side, self.NT)
-                            temp_productions = []
-                            for production in [production.strip() for production in productions.split(self.PRODUCTION_SEPARATOR)]:
-                                temp_production = []
-                                if not re.search(self.NT_PATTERN, production):
-                                    if production == "None":
-                                        production = ""
-                                    self.terminals.add(production)
-                                    temp_production.append((production, self.T))
-                                else:
-                                    for value in re.findall("<.+?>|[^<>]*", production):
-                                        if value != "":
-                                            if re.search(self.NT_PATTERN, value) is None:
-                                                sym = (value, self.T)
-                                                self.terminals.add(value)
-                                            else:
-                                                sym = (value, self.NT)
-                                            temp_production.append(sym)
-                                temp_productions.append(temp_production)                          
-                            self.max_number_prod_rules = max(self.max_number_prod_rules, len(temp_productions))
-                            if left_side not in self.grammar:
-                                self.grammar[left_side] = temp_productions
+
+        with open(self.grammar_file, "r") as f:
+            for line in f:
+                if not line.startswith("#") and line.strip() != "":
+                    if line.find(self.PRODUCTION_SEPARATOR):
+                        left_side, productions = line.split(self.RULE_SEPARATOR)
+                        left_side = left_side.strip()
+                        if not re.search(self.NT_PATTERN, left_side):
+                            raise ValueError("Left side not a non-terminal!")
+                        self.non_terminals.add(left_side)
+                        self.ordered_non_terminals.add(left_side)
+                        # assumes that the first rule in the file is the axiom
+                        if self.start_rule is None:
+                            self.start_rule = (left_side, self.NT)
+                        temp_productions = []
+                        for production in [production.strip() for production in productions.split(self.PRODUCTION_SEPARATOR)]:
+                            temp_production = []
+                            if not re.search(self.NT_PATTERN, production):
+                                if production == "None":
+                                    production = ""
+                                self.terminals.add(production)
+                                temp_production.append((production, self.T))
+                            else:
+                                for value in re.findall("<.+?>|[^<>]*", production):
+                                    if value != "":
+                                        if re.search(self.NT_PATTERN, value) is None:
+                                            sym = (value, self.T)
+                                            self.terminals.add(value)
+                                        else:
+                                            sym = (value, self.NT)
+                                        temp_production.append(sym)
+                            temp_productions.append(temp_production)                          
+                        self.max_number_prod_rules = max(self.max_number_prod_rules, len(temp_productions))
+                        if left_side not in self.grammar:
+                            self.grammar[left_side] = temp_productions
+        
         self.compute_non_recursive_options()
-        self.generate_uniform_pcfg()
+
+        if self.pcfg_path is not None:
+            # load PCFG probabilities from json file. List of lists, n*n, with n = max number of production rules of a NT
+            with open(self.pcfg_path) as f:
+                self.pcfg = np.array(json.load(f))
+        else:
+            self.generate_uniform_pcfg()
+
 
     def create_counter(self):
         self.counter = dict.fromkeys(self.grammar.keys(),[])
@@ -331,6 +335,7 @@ class Grammar:
 
 _inst = Grammar()
 set_path = _inst.set_path
+set_pcfg_path = _inst.set_pcfg_path
 read_grammar = _inst.read_grammar
 get_non_terminals = _inst.get_non_terminals
 count_number_of_options_in_production = _inst.count_number_of_options_in_production
