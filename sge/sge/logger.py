@@ -3,7 +3,11 @@ from sge.parameters import params
 import json
 import os
 
-
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 def evolution_progress(generation, pop):
     fitness_samples = [i['fitness'] for i in pop]
@@ -21,7 +25,7 @@ def save_progress_to_file(data):
 
 
 def save_step(generation, population):
-    c = json.dumps(population)
+    c = json.dumps(population, cls=NumpyEncoder)
     open('%s/run_%d/iteration_%d.json' % (params['EXPERIMENT_NAME'], params['RUN'], generation), 'a').write(c)
 
 
