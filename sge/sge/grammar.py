@@ -2,6 +2,7 @@ import re
 import random
 from sge.utilities import ordered_set
 import json
+import numpy as np
 
 class Grammar:
     """Class that represents a grammar. It works with the prefix notation."""
@@ -22,6 +23,10 @@ class Grammar:
         self.start_rule = None
         self.max_depth = None
         self.max_init_depth = None
+        self.max_number_prod_rules = 0
+        self.pcfg = None
+        self.pcfg_mask = None
+        self.index_of_non_terminal = {}
 
     def set_path(self, grammar_path):
         self.grammar_file = grammar_path
@@ -49,7 +54,8 @@ class Grammar:
         if self.grammar_file is None:
             raise Exception("You need to specify the path of the grammar file")
 
-
+        # TODO: fazer alterações para que ou leia um json ou wtv
+        # TODO: associar a variavel de max prod rules num nt
         if self.grammar_file.endswith("json"):
             with open(self.grammar_file) as f:
                 self.grammar = json.load(f)
@@ -71,9 +77,7 @@ class Grammar:
                             if self.start_rule is None:
                                 self.start_rule = (left_side, self.NT)
                             temp_productions = []
-                            prob = 1.0/len(productions.split(self.PRODUCTION_SEPARATOR))
                             for production in [production.strip() for production in productions.split(self.PRODUCTION_SEPARATOR)]:
-                                productions_probs = []
                                 temp_production = []
                                 if not re.search(self.NT_PATTERN, production):
                                     if production == "None":
@@ -89,16 +93,41 @@ class Grammar:
                                             else:
                                                 sym = (value, self.NT)
                                             temp_production.append(sym)
-                                productions_probs.append(temp_production)
-                                productions_probs.append(prob)
-                                temp_productions.append(productions_probs)
+                                temp_productions.append(temp_production)                          
+                            self.max_number_prod_rules = max(self.max_number_prod_rules, len(temp_productions))
                             if left_side not in self.grammar:
                                 self.grammar[left_side] = temp_productions
         self.compute_non_recursive_options()
+        self.generate_uniform_pcfg()
+
+    def create_counter(self):
         self.counter = dict.fromkeys(self.grammar.keys(),[])
         for k in self.counter.keys():
             self.counter[k] = [0] * len(self.grammar[k])
 
+    def generate_uniform_pcfg(self):
+        """
+        assigns uniform probabilities to grammar
+        """
+        array = np.zeros(shape=(len(self.grammar.keys()),self.max_number_prod_rules))
+        for i, nt in enumerate(self.grammar):
+            number_probs = len(self.grammar[nt])
+            prob = 1.0 / number_probs
+            array[i,:number_probs] = prob
+            if nt not in self.index_of_non_terminal:
+                self.index_of_non_terminal[nt] = i
+        self.pcfg = array
+        self.pcfg_mask = self.pcfg != 0
+
+
+    def generate_random_pcfg(self):
+        pass
+
+    def get_mask(self):
+        return self.pcfg_mask
+
+    def get_index_of_non_terminal(self):
+        return self.index_of_non_terminal
 
     def get_non_terminals(self):
         return self.ordered_non_terminals
@@ -121,43 +150,43 @@ class Grammar:
     def list_non_recursive_productions(self, nt):
         non_recursive_elements = []
         for options in self.grammar[nt]:
-            for option in options[0]:
+            for option in options:
                 if option[1] == self.NT and option[0] == nt:
                     break
             else:
                 non_recursive_elements += [options]
         return non_recursive_elements
 
-    def recursive_individual_creation(self, genome, symbol, current_depth):
-        codon = random.random()
-        expansion_possibility = 0
+    def recursive_individual_creation(self, genome, symbol, current_depth, gram):
+        codon = np.random.uniform()
+
         if current_depth > self.max_init_depth:
-            non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(symbol)
+            non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(gram, symbol)
             prob_aux = 0.0
 
-            for index, option in non_recursive_prods:    
-                new_prob = (option[1] * 1.0) / prob_non_recursive
-                if new_prob > 1.0:
-                    print("ERROR")
-                    input()
+            for index, option in non_recursive_prods:
+                if prob_non_recursive == 0.0:
+                    new_prob = 1.0 / len(non_recursive_prods)
+                else:
+                    new_prob = (gram[self.index_of_non_terminal[symbol],index] * 1.0) / prob_non_recursive
                 prob_aux += new_prob
-                if codon < prob_aux:
+                if codon <= round(prob_aux,3):
                     expansion_possibility = index
                     break
         else:
             prob_aux = 0.0
             for index, option in enumerate(self.grammar[symbol]):
-                prob_aux += option[1]
-                if codon < prob_aux:
+                prob_aux += gram[self.index_of_non_terminal[symbol],index]
+                if codon <= round(prob_aux,3):
                     expansion_possibility = index
                     break
 
         genome[self.get_non_terminals().index(symbol)].append([expansion_possibility,codon])
         expansion_symbols = self.grammar[symbol][expansion_possibility]
         depths = [current_depth]
-        for sym in expansion_symbols[0]:
+        for sym in expansion_symbols:
             if sym[1] != self.T:
-                depths.append(self.recursive_individual_creation(genome, sym[0], current_depth + 1))
+                depths.append(self.recursive_individual_creation(genome, sym[0], current_depth + 1, gram))
         return max(depths)
 
     def mapping(self, mapping_rules, gram, positions_to_map=None, needs_python_filter=False):
@@ -176,75 +205,79 @@ class Grammar:
             output.append(current_sym[0])
         else:
             current_sym_pos = self.ordered_non_terminals.index(current_sym[0])
-            choices = gram[current_sym[0]]
-            codon = random.random()
-            expansion_possibility = 0
-
+            choices = self.grammar[current_sym[0]]
+            codon = np.random.uniform()
             if positions_to_map[current_sym_pos] >= len(mapping_rules[current_sym_pos]):
                 # Experiencia
                 if current_depth > self.max_depth:
-                    non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(current_sym[0])
+                    non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(gram, current_sym[0])
                     prob_aux = 0.0
                     for index, option in non_recursive_prods:
-                        new_prob = (option[1] * 1.0) / prob_non_recursive
+                        if prob_non_recursive == 0.0:
+                            new_prob = 1.0 / len(non_recursive_prods)
+                        else:
+                            new_prob = ((gram[self.index_of_non_terminal[current_sym[0]],index] * 1.0) / prob_non_recursive)
                         prob_aux += new_prob
-                        if codon < prob_aux:
+                        if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
-
                 else:
                     prob_aux = 0.0
-                    for index, option in enumerate(gram[current_sym[0]]):
-                        prob_aux += option[1]
-                        if codon < prob_aux:
+                    for index, option in enumerate(self.grammar[current_sym[0]]):
+                        prob_aux += gram[self.index_of_non_terminal[current_sym[0]],index]
+                        if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
                 mapping_rules[current_sym_pos].append([expansion_possibility,codon])
-            # update regra nova
             else:
-                # verificação das probabilidades - re mapeamento
+                # re-mapping with new probabilities                
                 codon = mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]][1]
                 if current_depth > self.max_depth:
-                    non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(current_sym[0])    
+                    non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(gram, current_sym[0])    
                     prob_aux = 0.0
                     for index, option in non_recursive_prods:
-                        new_prob = (option[1] * 1.0) / prob_non_recursive
+                        if prob_non_recursive == 0.0:
+                            new_prob = 1.0 / len(non_recursive_prods)
+                        else:
+                            new_prob = ((gram[self.index_of_non_terminal[current_sym[0]],index] * 1.0) / prob_non_recursive)
                         prob_aux += new_prob
-                        if codon < prob_aux:
+                        if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
                 else:
                     prob_aux = 0.0
-                    for index, option in enumerate(gram[current_sym[0]]):
-                        prob_aux += option[1]
-                        if codon < prob_aux:
+                    for index, option in enumerate(self.grammar[current_sym[0]]):
+                        prob_aux += gram[self.index_of_non_terminal[current_sym[0]],index]
+                        if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
             # update mapping rules com a updated expansion possibility
             mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility, codon]
-            # current_production = mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]][0]
             current_production = expansion_possibility
             positions_to_map[current_sym_pos] += 1
             next_to_expand = choices[current_production]
-            for next_sym in next_to_expand[0]:
+            for next_sym in next_to_expand:
                 depths.append(
                     self._recursive_mapping(mapping_rules, positions_to_map, next_sym, current_depth + 1, output, gram))
         return max(depths)
 
-    def get_non_recursive_productions(self, symbol):
+    def get_non_recursive_productions(self, gram, symbol):
         prob_non_recursive = 0.0
         non_recursive_prods = []
         for index, option in enumerate(self.grammar[symbol]):
-            for s in option[0]:
+            for s in option:
                 if s[0] == symbol:
                     break
             else:
-                prob_non_recursive += option[1]
+                prob_non_recursive += gram[self.index_of_non_terminal[symbol],index]
                 non_recursive_prods.append([index, option])
         return non_recursive_prods, prob_non_recursive
 
     def get_dict(self):
         return self.grammar
+
+    def get_pcfg(self):
+        return self.pcfg
 
     @staticmethod
     def python_filter(txt):
@@ -311,6 +344,9 @@ set_min_init_tree_depth = _inst.set_min_init_tree_depth
 get_max_depth = _inst.get_max_depth
 get_non_recursive_options = _inst.get_non_recursive_options
 get_dict = _inst.get_dict
+get_pcfg = _inst.get_pcfg
+get_mask = _inst.get_mask
+get_index_of_non_terminal = _inst.get_index_of_non_terminal
 ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
 python_filter = _inst.python_filter
