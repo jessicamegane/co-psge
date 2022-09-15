@@ -14,6 +14,7 @@ from sge.parameters import (
 )
 import copy
 import numpy as np
+from sge.stats.stats import get_stats
 
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
@@ -90,6 +91,9 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
                 evaluate(i, evaluation_function)      
         population.sort(key=lambda x: x['fitness'])
 
+        # Generates statistics for run so far
+        get_stats(population)
+        
         # logger saves the grammar of the best individual
         
         logger.evolution_progress(it, population)
@@ -109,4 +113,5 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
 
         population = new_population
         it += 1
+    get_stats(population, end=True)
 

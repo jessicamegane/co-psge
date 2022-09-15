@@ -4,3 +4,4 @@ from .operators.mutation import *
 from .utilities.protected_math import *
 from .utilities.ordered_set import *
 from .grammar import *
+from .stats.stats import *

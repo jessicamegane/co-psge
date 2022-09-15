@@ -23,7 +23,8 @@ params = {'PARAMETERS': None,
           'MAX_TREE_DEPTH': 17,
           'PROB_MUTATION_GRAMMAR': 0.05,
           'NORMAL_DIST_SD': 0.5,
-          'GRAMMAR_PROBS': None
+          'GRAMMAR_PROBS': None,
+          'FITNESS_FUNCTION': "supervised_learning.regression"
           }
 
 
