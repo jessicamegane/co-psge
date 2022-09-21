@@ -1,6 +1,5 @@
-from cmath import isnan
 import random
-import numpy as np
+from numpy import cos, sin
 import math
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 

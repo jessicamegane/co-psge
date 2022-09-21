@@ -103,12 +103,6 @@ class Grammar:
                 self.pcfg = np.array(json.load(f))
         else:
             self.generate_uniform_pcfg()
-
-
-    def create_counter(self):
-        self.counter = dict.fromkeys(self.grammar.keys(),[])
-        for k in self.counter.keys():
-            self.counter[k] = [0] * len(self.grammar[k])
         self.mutation_prob = [0.1] * len(self.grammar.keys())
 
     def get_mutation_prob(self):
