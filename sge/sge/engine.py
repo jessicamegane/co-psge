@@ -12,12 +12,13 @@ from sge.parameters import (
     set_parameters,
     load_parameters
 )
-
+import copy
+import numpy as np
 
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
-    tree_depth = grammar.recursive_individual_creation(genotype, grammar.start_rule()[0], 0)
-    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'grammar': grammar.get_dict(), 'mutation_prob':grammar.get_mutation_prob() }
+    tree_depth = grammar.recursive_individual_creation(genotype, grammar.start_rule()[0], 0, grammar.get_pcfg())
+    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(), 'mutation_prob':grammar.get_mutation_prob() }
 
 
 def make_initial_population():
@@ -26,9 +27,9 @@ def make_initial_population():
 
 
 def evaluate(ind, eval_func):
-    mapping_values = [0 for i in ind['genotype']]
+    mapping_values = [0 for _ in ind['genotype']]
     # the grammar of the individual is used in the mapping
-    phen, tree_depth = grammar.mapping(ind['genotype'], ind['grammar'], mapping_values)
+    phen, tree_depth = grammar.mapping(ind['genotype'], ind['pcfg'], mapping_values)
     quality, other_info = eval_func.evaluate(phen)
     ind['phenotype'] = phen
     ind['fitness'] = quality
@@ -48,47 +49,34 @@ def setup(parameters_file_path = None):
     logger.prepare_dumps()
     random.seed(params['SEED'])
     grammar.set_path(params['GRAMMAR'])
+    if params['GRAMMAR_PROBS'] is not None:
+        grammar.set_pcfg_path(params['GRAMMAR_PROBS'])
     grammar.read_grammar()
     grammar.set_max_tree_depth(params['MAX_TREE_DEPTH'])
     grammar.set_min_init_tree_depth(params['MIN_TREE_DEPTH'])
 
-def sumProbs(prods, p, diff):
-    for prod in prods:
-        if prod in p:
-            prod[1] = prod[1] + diff
-
 
 def mutationGrammar(ind):
-    gram = ind['grammar']
-    for _, prods in gram.items():
-        for prod in prods:
+    ind['fitness'] = None
+    gram = ind['pcfg']
+    mask = copy.deepcopy(grammar.get_mask())
+    rows, columns = gram.shape
+    for i in range(rows):
+        if np.count_nonzero(mask[i,:]) <= 1:
+            continue
+        for j in range(columns):
+            if not mask[i,j]:
+                continue
             # mutation based on normal distribution
-            if random.random() < params['PROB_MUTATION_GRAMMAR']:
-                old_prob = prod[1]
-                gauss = random.gauss(0.0,params['NORMAL_DIST_SD'])
-                new_prob = old_prob + gauss
-                diff = (gauss / (len(prods) - 1))
-                if new_prob >= 1:
-                    for p in prods:
-                        p[1] = 0
-                        if p == prod:
-                            p[1] = 1
-                elif new_prob < 0:
-                    diff = (old_prob / (len(prods) - 1))
-                    for p in prods:
-                        p[1] = p[1] + diff
-                        if p == prod:
-                            p[1] = 0
-                else:
-                    for p in prods:
-                        p[1] = p[1] - diff
-                        if p == prod:
-                            p[1] = new_prob
+            if np.random.uniform() < params['PROB_MUTATION_GRAMMAR']:
+                gauss = np.random.normal(0.0,params['NORMAL_DIST_SD'])
+                diff = (gauss / (np.count_nonzero(mask[i,:]) - 1))
 
-                # probabilities check
-                # probabilitiesCheck(prods)
+                gram[i,j] += gauss
+                mask[i,j] = False
+                gram[i,mask[i,:]] -= diff
+                gram[i,:] = np.clip(gram[i,:], 0, np.infty) / np.sum(np.clip(gram[i,:], 0, np.infty))
                 break
-
     return ind
 
 def mutation_prob_mutation(ind):
@@ -120,8 +108,8 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
         logger.evolution_progress(it, population)
 
         new_population = population[:params['ELITISM']]
-        while len(new_population) < params['POPSIZE'] - params['ELITISM']:
-            if random.random() < params['PROB_CROSSOVER']:
+        while len(new_population) < params['POPSIZE']:
+            if np.random.uniform() < params['PROB_CROSSOVER']:
                 p1 = tournament(population, params['TSIZE'])
                 p2 = tournament(population, params['TSIZE'])
                 ni = crossover(p1, p2)

@@ -1,5 +1,5 @@
 import copy
-import random
+import numpy as np
 import sge.grammar as grammar
 
 def mutate(p, pmutation):
@@ -12,29 +12,31 @@ def mutate(p, pmutation):
         temp = p['mapping_values']
         mapped = temp[at_gene]
         for position_to_mutate in range(0, mapped):
-            if random.random() < pmutation:
+            if np.random.uniform() < pmutation:
                 current_value = p['genotype'][at_gene][position_to_mutate]
                 # codon = random.random()
                 # gaussian mutation
-                codon = random.gauss(current_value[1], 0.5)
+                codon = np.random.normal(current_value[1], 0.5)
                 codon = min(codon,1.0)
                 codon = max(codon,0.0)
-                expansion_possibility = 0
                 if p['tree_depth'] >= grammar.get_max_depth():
-                    non_recursive_prods, prob_non_recursive = grammar.get_non_recursive_productions(nt)    
+                    non_recursive_prods, prob_non_recursive = grammar.get_non_recursive_productions(p['pcfg'],nt)    
                     prob_aux = 0.0
                     for index, option in non_recursive_prods:
-                        new_prob = (option[1] * 1.0) / prob_non_recursive
+                        if prob_non_recursive == 0.0:
+                            new_prob = 1.0 / len(non_recursive_prods)
+                        else:
+                            new_prob = (p['pcfg'][grammar.get_index_of_non_terminal()[nt],index] * 1.0) / prob_non_recursive
                         prob_aux += new_prob
 
-                        if codon < prob_aux:
+                        if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
                 else:
                     prob_aux = 0.0
                     for index, option in enumerate(grammar.get_dict()[nt]):
-                        prob_aux += option[1]
-                        if codon < prob_aux:
+                        prob_aux += p['pcfg'][grammar.get_index_of_non_terminal()[nt],index]
+                        if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
                   
