@@ -89,7 +89,7 @@ def get_soo_stats(individuals, end):
     """
 
     # Get best individual.
-    best = max(individuals)
+    best = individuals[0]
 
     if not trackers.best_ever or best > trackers.best_ever:
         # Save best individual in trackers.best_ever.
@@ -287,7 +287,7 @@ def update_stats(individuals, end):
     :param end: Boolean flag for indicating the end of an evolutionary run.
     :return: Nothing.
     """
-
+    # AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
     if not end:
         # Time Stats
         trackers.time_list.append(time() - stats['time_adjust'])
