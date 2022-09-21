@@ -25,7 +25,8 @@ params = {'PARAMETERS': None,
           'NORMAL_DIST_SD': 0.5,
           'PROB_MUTATION_PROBS': 0.3,
           'GAUSS_SD': 0.01,
-          'GRAMMAR_PROBS': None
+          'GRAMMAR_PROBS': None,
+          'MUTATE_GRAMMAR': True
           }
 
 
@@ -127,7 +128,10 @@ def set_parameters(arguments):
                         dest='GAUSS_SD',
                         type=float,
                         help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution')
-    
+    parser.add_argument('--mutate_grammar',
+                        dest='MUTATE_GRAMMAR',
+                        type=bool,
+                        help='Specifies if we want the grammar to mutate')
     
     # Parse command line arguments using all above information.
     args, _ = parser.parse_known_args(arguments)

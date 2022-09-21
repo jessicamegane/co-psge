@@ -116,7 +116,8 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             else:
                 ni = tournament(population, params['TSIZE'])
             
-            # ni = mutationGrammar(ni)
+            if params["MUTATE_GRAMMAR"]:
+                ni = mutationGrammar(ni)
             ni = mutation_prob_mutation(ni)
             # ni = mutate(ni, params['PROB_MUTATION'])
             ni = mutate_level(ni)
