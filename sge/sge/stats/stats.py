@@ -297,7 +297,7 @@ def update_stats(individuals, end):
                               trackers.time_list[0]
 
     # Population Stats
-    stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
+    stats['total_inds'] = params['POPSIZE'] * (stats['gen'] + 1)
     stats['runtime_error'] = len(trackers.runtime_error_cache)
     if params['CACHE']:
         stats['unique_inds'] = len(trackers.cache)
@@ -305,35 +305,36 @@ def update_stats(individuals, end):
                                  stats['total_inds'] * 100
 
     # Genome Stats
-    genome_lengths = [len(i.genome) for i in individuals]
+    genome_lengths = [len(i['genotype']) for i in individuals]
     stats['max_genome_length'] = np.nanmax(genome_lengths)
     stats['ave_genome_length'] = np.nanmean(genome_lengths)
     stats['min_genome_length'] = np.nanmin(genome_lengths)
     stats['median_genome_length'] = np.median(genome_lengths)
 
     # Used Codon Stats
-    codons = [i.used_codons for i in individuals]
-    stats['max_used_codons'] = np.nanmax(codons)
-    stats['ave_used_codons'] = np.nanmean(codons)
-    stats['min_used_codons'] = np.nanmin(codons)
-    stats['median_used_codons'] = np.median(codons)
+    # codons = [i.used_codons for i in individuals]
+    # stats['max_used_codons'] = np.nanmax(codons)
+    # stats['ave_used_codons'] = np.nanmean(codons)
+    # stats['min_used_codons'] = np.nanmin(codons)
+    # stats['median_used_codons'] = np.median(codons)
 
     # Tree Depth Stats
-    depths = [i.depth for i in individuals]
+    depths = [i['tree_depth'] for i in individuals]
     stats['max_tree_depth'] = np.nanmax(depths)
     stats['ave_tree_depth'] = np.nanmean(depths)
     stats['min_tree_depth'] = np.nanmin(depths)
 
+    # TODO: gardar nós algures no mapeamento 
     # Tree Node Stats
-    nodes = [i.nodes for i in individuals]
-    stats['max_tree_nodes'] = np.nanmax(nodes)
-    stats['ave_tree_nodes'] = np.nanmean(nodes)
-    stats['min_tree_nodes'] = np.nanmin(nodes)
+    # nodes = [i.nodes for i in individuals]
+    # stats['max_tree_nodes'] = np.nanmax(nodes)
+    # stats['ave_tree_nodes'] = np.nanmean(nodes)
+    # stats['min_tree_nodes'] = np.nanmin(nodes)
 
     if not hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
         # Fitness Stats
         best = trackers.best_ever
-        stats['best_fitness'] = best.fitness
+        stats['best_fitness'] = best['fitness']
         stats['best_cases_solved_train'] = sum(best.test_cases)
         stats['best_cases_solved_train_percent'] = sum(best.test_cases) * 1. / len(best.test_cases)
 

@@ -24,7 +24,16 @@ params = {'PARAMETERS': None,
           'PROB_MUTATION_GRAMMAR': 0.05,
           'NORMAL_DIST_SD': 0.5,
           'GRAMMAR_PROBS': None,
-          'FITNESS_FUNCTION': "supervised_learning.regression"
+          # stats parameters
+          'FITNESS_FUNCTION': "supervised_learning.regression",
+          'SILENT': False,
+          'DEBUG': False,
+          # CACHING
+        # The cache tracks unique individuals across evolution by saving a
+        # string of each phenotype in a big list of all phenotypes. Saves all
+        # fitness information on each individual. Gives you an idea of how much
+        # repetition is in standard GE/GP.
+        'CACHE': False,
           }
 
 
@@ -136,3 +145,7 @@ def set_parameters(arguments):
         load_parameters(cmd_args['PARAMETERS'])
     params.update(cmd_args)
 
+    from sge.utilities.algorithm.initialise_run import initialise_run_params
+
+    # Initialise run lists and folders before we set imports.r
+    initialise_run_params(True, False)

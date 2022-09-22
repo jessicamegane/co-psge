@@ -5,9 +5,9 @@ from random import seed
 from socket import gethostname
 from time import time
 
-from algorithm.parameters import params
-from utilities.stats import trackers
-from utilities.stats.file_io import generate_folders_and_files
+from sge.parameters import params
+from sge.utilities.stats import trackers
+from sge.utilities.stats.file_io import generate_folders_and_files
 
 
 def initialise_run_params(create_files, first=False):
@@ -22,9 +22,9 @@ def initialise_run_params(create_files, first=False):
     trackers.time_list.append(time())
 
     # Set random seed
-    if params['RANDOM_SEED'] is None:
-        params['RANDOM_SEED'] = int(start.microsecond)
-    seed(params['RANDOM_SEED'])
+    if params['SEED'] is None:
+        params['SEED'] = int(start.microsecond)
+    seed(params['SEED'])
 
     # Generate a time stamp for use with folder and file names.
     hms = "%02d%02d%02d" % (start.hour, start.minute, start.second)
@@ -35,13 +35,13 @@ def initialise_run_params(create_files, first=False):
                                      hms,
                                      str(start.microsecond),
                                      str(getpid()),
-                                     str(params['RANDOM_SEED'])])
+                                     str(params['SEED'])])
     if not params['SILENT']:
         print("\nStart:\t", start, "\n")
 
     # Generate save folders and files
     if params['DEBUG']:
-        print("Seed:\t", params['RANDOM_SEED'], "\n")
+        print("Seed:\t", params['SEED'], "\n")
     elif create_files:
         generate_folders_and_files(first)
 
