@@ -26,11 +26,11 @@ def make_initial_population():
         yield generate_random_individual()
 
 
-def evaluate(ind, eval_func):
+def evaluate(ind, eval_func, gen):
     mapping_values = [0 for _ in ind['genotype']]
     # the grammar of the individual is used in the mapping
     phen, tree_depth = grammar.mapping(ind['genotype'], ind['pcfg'], mapping_values)
-    quality, other_info = eval_func.evaluate(phen)
+    quality, other_info = eval_func.evaluate(phen, gen)
     ind['phenotype'] = phen
     ind['fitness'] = quality
     ind['other_info'] = other_info
@@ -80,14 +80,14 @@ def mutationGrammar(ind):
     return ind
 
 def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
-    setup(parameters_file_path=parameters_file)
+    # setup(parameters_file_path=parameters_file)
     population = list(make_initial_population())
     it = 0
 
     while it <= params['GENERATIONS']:  
         for i in tqdm(population):
             if i['fitness'] is None:
-                evaluate(i, evaluation_function)      
+                evaluate(i, evaluation_function, it)      
         population.sort(key=lambda x: x['fitness'])
 
         # logger saves the grammar of the best individual
