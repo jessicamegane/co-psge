@@ -1,4 +1,5 @@
 import random
+import functools
 import sys
 import sge.grammar as grammar
 import sge.logger as logger
@@ -88,7 +89,7 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
         for i in tqdm(population):
             if i['fitness'] is None:
                 evaluate(i, evaluation_function, it)      
-        population.sort(key=lambda x: x['fitness'])
+        population.sort(key=functools.cmp_to_key(lambda a, b: a['other_info']['n_nodes'] - b['other_info']['n_nodes'] if abs(a['fitness'] - b['fitness']) < 0.02 else a['fitness'] - b['fitness']))
 
         # logger saves the grammar of the best individual
         
