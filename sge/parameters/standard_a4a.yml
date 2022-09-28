@@ -1,12 +1,11 @@
-POPSIZE: 5
-GENERATIONS: 3
-ELITISM: 1                   # number of individuals that survive
+POPSIZE: 200
+GENERATIONS: 100
+ELITISM: 20                   # number of individuals that survive
 PROB_CROSSOVER: 0.9
 PROB_MUTATION: 0.1
 TSIZE: 3
 GRAMMAR: 'grammars/a4a_dt_hybrid.pybnf'
 EXPERIMENT_NAME: 'dumps/Test'
-RUN: 1
 INCLUDE_GENOTYPE: True
 SAVE_STEP: 1
 VERBOSE: True
