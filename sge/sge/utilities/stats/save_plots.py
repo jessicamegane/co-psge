@@ -76,7 +76,7 @@ def save_plot_from_data(data, name):
     :return: Nothing.
     """
 
-    from algorithm.parameters import params
+    from sge.parameters import params
 
     # Initialise up figure instance.
     fig = plt.figure()
