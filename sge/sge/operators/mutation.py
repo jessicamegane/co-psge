@@ -14,7 +14,6 @@ def mutate(p, pmutation):
         for position_to_mutate in range(0, mapped):
             if np.random.uniform() < pmutation:
                 current_value = p['genotype'][at_gene][position_to_mutate]
-                # codon = random.random()
                 # gaussian mutation
                 codon = np.random.normal(current_value[1], 0.5)
                 codon = min(codon,1.0)
