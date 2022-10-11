@@ -90,8 +90,8 @@ def get_soo_stats(individuals, end):
 
     # Get best individual.
     best = individuals[0]
-
-    if not trackers.best_ever or best > trackers.best_ever:
+    # TODO: change in case of minimization or maximization
+    if not trackers.best_ever or best['fitness'] > trackers.best_ever['fitness']:
         # Save best individual in trackers.best_ever.
         trackers.best_ever = best
 
@@ -102,7 +102,7 @@ def get_soo_stats(individuals, end):
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
         if not end:
-            trackers.best_fitness_list.append(trackers.best_ever.fitness)
+            trackers.best_fitness_list.append(trackers.best_ever['fitness'])
 
         if params['VERBOSE'] or end:
             save_plot_from_data(trackers.best_fitness_list, "best_fitness")
@@ -120,14 +120,14 @@ def get_soo_stats(individuals, end):
     # Generate test fitness on regression problems
     if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
         # Save training fitness.
-        trackers.best_ever.training_fitness = copy(trackers.best_ever.fitness)
+        trackers.best_ever.training_fitness = copy(trackers.best_ever['fitness'])
 
         # Evaluate test fitness.
         trackers.best_ever.test_fitness = params['FITNESS_FUNCTION'](
             trackers.best_ever, dist='test')
 
         # Set main fitness as training fitness.
-        trackers.best_ever.fitness = trackers.best_ever.training_fitness
+        trackers.best_ever['fitness'] = trackers.best_ever.training_fitness
 
     # Save stats to list.
     if params['VERBOSE'] or (not params['DEBUG'] and not end):
@@ -305,7 +305,7 @@ def update_stats(individuals, end):
                                  stats['total_inds'] * 100
 
     # Genome Stats
-    genome_lengths = [len(i['genotype']) for i in individuals]
+    genome_lengths = [ sum([len(j) for j in i['genotype']]) for i in individuals]
     stats['max_genome_length'] = np.nanmax(genome_lengths)
     stats['ave_genome_length'] = np.nanmean(genome_lengths)
     stats['min_genome_length'] = np.nanmin(genome_lengths)
@@ -326,46 +326,47 @@ def update_stats(individuals, end):
 
     # TODO: gardar nós algures no mapeamento 
     # Tree Node Stats
-    # nodes = [i.nodes for i in individuals]
-    # stats['max_tree_nodes'] = np.nanmax(nodes)
-    # stats['ave_tree_nodes'] = np.nanmean(nodes)
-    # stats['min_tree_nodes'] = np.nanmin(nodes)
+    nodes = [i['nodes'] for i in individuals]
+    stats['max_tree_nodes'] = np.nanmax(nodes)
+    stats['ave_tree_nodes'] = np.nanmean(nodes)
+    stats['min_tree_nodes'] = np.nanmin(nodes)
 
-    if not hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
-        # Fitness Stats
-        best = trackers.best_ever
-        stats['best_fitness'] = best['fitness']
-        stats['best_cases_solved_train'] = sum(best.test_cases)
-        stats['best_cases_solved_train_percent'] = sum(best.test_cases) * 1. / len(best.test_cases)
+    # TODO: SKIP
+    # if not hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
+    #     # Fitness Stats
+    #     best = trackers.best_ever
+    #     stats['best_fitness'] = best['fitness']
+    #     stats['best_cases_solved_train'] = sum(best.test_cases)
+    #     stats['best_cases_solved_train_percent'] = sum(best.test_cases) * 1. / len(best.test_cases)
 
-        if hasattr(params['FITNESS_FUNCTION'], "training_test"):
-            best_copy = best.deep_copy()
-            stats['best_fitness_test'] = params['FITNESS_FUNCTION'](best_copy, dist='test')
-            stats['best_cases_solved_test'] = sum(best_copy.test_cases)
-            stats['best_cases_solved_test_percent'] = sum(best_copy.test_cases) * 1. / len(best_copy.test_cases)
+    #     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
+    #         best_copy = best.deep_copy()
+    #         stats['best_fitness_test'] = params['FITNESS_FUNCTION'](best_copy, dist='test')
+    #         stats['best_cases_solved_test'] = sum(best_copy.test_cases)
+    #         stats['best_cases_solved_test_percent'] = sum(best_copy.test_cases) * 1. / len(best_copy.test_cases)
         
-        fitnesses = [i.fitness for i in individuals]
-        try:
-            stats['ave_fitness'] = np.nanmean(fitnesses, axis=0)
-            stats['median_fitness'] = np.median(fitnesses, axis=0)
-        except:
-            try:
-                # numpy nanmean throws an error with very large ints
-                # possibly this is a consequence of unlimited size of
-                # ints in python 3.x
-                tmp_list = []
-                for f in fitnesses:
-                    if f > 17999999999999999999:
-                        tmp_list.append(17999999999999999999)
-                    else:
-                        tmp_list.append(f)
-                np.nanmean(tmp_list, axis=0)
-                stats['ave_fitness'] = np.nanmean(tmp_list, axis=0)
-                stats['median_fitness'] = np.median(tmp_list, axis=0)
-            except:
-                stats['ave_fitness'] = -1. * sys.maxint
-                stats['median_fitness'] = -1. * sys.maxint
-                print("Critical error in fitness stats: ", fitnesses)
+    #     fitnesses = [i.fitness for i in individuals]
+    #     try:
+    #         stats['ave_fitness'] = np.nanmean(fitnesses, axis=0)
+    #         stats['median_fitness'] = np.median(fitnesses, axis=0)
+    #     except:
+    #         try:
+    #             # numpy nanmean throws an error with very large ints
+    #             # possibly this is a consequence of unlimited size of
+    #             # ints in python 3.x
+    #             tmp_list = []
+    #             for f in fitnesses:
+    #                 if f > 17999999999999999999:
+    #                     tmp_list.append(17999999999999999999)
+    #                 else:
+    #                     tmp_list.append(f)
+    #             np.nanmean(tmp_list, axis=0)
+    #             stats['ave_fitness'] = np.nanmean(tmp_list, axis=0)
+    #             stats['median_fitness'] = np.median(tmp_list, axis=0)
+    #         except:
+    #             stats['ave_fitness'] = -1. * sys.maxint
+    #             stats['median_fitness'] = -1. * sys.maxint
+    #             print("Critical error in fitness stats: ", fitnesses)
     
     # Programming Metrics Stats
     if hasattr(params['FITNESS_FUNCTION'], "progsys") and params['FITNESS_FUNCTION'].progsys:
@@ -447,10 +448,10 @@ def print_final_stats():
               trackers.best_ever.training_fitness)
         print("  Test fitness:\t\t", trackers.best_ever.test_fitness)
     else:
-        print("\n\nBest:\n  Fitness:\t", trackers.best_ever.fitness)
+        print("\n\nBest:\n  Fitness:\t", trackers.best_ever['fitness'])
 
-    print("  Phenotype:", trackers.best_ever.phenotype)
-    print("  Genome:", trackers.best_ever.genome)
+    print("  Phenotype:", trackers.best_ever['phenotype'])
+    print("  Genome:", trackers.best_ever['genotype'])
     print_generation_stats()
 
 

@@ -14,7 +14,7 @@ from sge.parameters import (
 )
 import copy
 import numpy as np
-from sge.stats.stats import get_stats
+from sge.stats.stats import get_stats, stats
 
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
@@ -30,8 +30,9 @@ def make_initial_population():
 def evaluate(ind, eval_func):
     mapping_values = [0 for _ in ind['genotype']]
     # the grammar of the individual is used in the mapping
-    phen, tree_depth = grammar.mapping(ind['genotype'], ind['pcfg'], mapping_values)
+    phen, tree_depth, output = grammar.mapping(ind['genotype'], ind['pcfg'], mapping_values)
     quality, other_info = eval_func.evaluate(phen)
+    ind['nodes'] = len(output)
     ind['phenotype'] = phen
     ind['fitness'] = quality
     ind['other_info'] = other_info
@@ -85,7 +86,8 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
     population = list(make_initial_population())
     it = 0
 
-    while it <= params['GENERATIONS']:  
+    while it <= params['GENERATIONS']:
+        stats['gen'] = it
         for i in tqdm(population):
             if i['fitness'] is None:
                 evaluate(i, evaluation_function)      

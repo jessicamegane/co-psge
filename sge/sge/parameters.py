@@ -28,12 +28,30 @@ params = {'PARAMETERS': None,
           'FITNESS_FUNCTION': "supervised_learning.regression",
           'SILENT': False,
           'DEBUG': False,
+          # SAVING
+          # Save the phenotype of the best individual from each generation. Can
+          # generate a lot of files. DEBUG must be False.
+          'SAVE_ALL': False,
+          # Save a plot of the evolution of the best fitness result for each
+          # generation.
+          'SAVE_PLOTS': True,
           # CACHING
-        # The cache tracks unique individuals across evolution by saving a
-        # string of each phenotype in a big list of all phenotypes. Saves all
-        # fitness information on each individual. Gives you an idea of how much
-        # repetition is in standard GE/GP.
-        'CACHE': False,
+          # The cache tracks unique individuals across evolution by saving a
+          # string of each phenotype in a big list of all phenotypes. Saves all
+          # fitness information on each individual. Gives you an idea of how much
+          # repetition is in standard GE/GP.
+          'CACHE': True,
+          # STATE SAVING/LOADING
+          # Save the state of the evolutionary run every generation. You can
+          # specify how often you want to save the state with SAVE_STATE_STEP.
+          'SAVE_STATE': False,
+          # Specify how often the state of the current evolutionary run is
+          # saved (i.e. every n-th generation). Requires int value.
+          'SAVE_STATE_STEP': 1,
+          # Load an evolutionary run from a saved state. You must specify the
+          # full file path to the desired state file. Note that state files have
+          # no file type.
+          'LOAD_STATE': None,
           }
 
 

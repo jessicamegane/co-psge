@@ -19,5 +19,5 @@ def crossover(p1, p2):
     gram = p1['pcfg'] if p1['fitness'] < p2['fitness'] else p2['pcfg']
    
     # compute nem individual
-    _, tree_depth = grammar.mapping(genotype, gram, mapping_values)
-    return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram}
+    _, tree_depth, nodes = grammar.mapping(genotype, gram, mapping_values)
+    return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'nodes': len(nodes)}

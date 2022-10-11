@@ -198,10 +198,10 @@ class Grammar:
             positions_to_map = [0] * len(self.ordered_non_terminals)
         output = []
         max_depth = self._recursive_mapping(mapping_rules, positions_to_map, self.start_rule, 0, output, gram)
-        output = "".join(output)
+        phen = "".join(output)
         if self.grammar_file.endswith("pybnf"):
-            output = self.python_filter(output)
-        return output, max_depth
+            phen = self.python_filter(phen)
+        return phen, max_depth, output
 
     def _recursive_mapping(self, mapping_rules, positions_to_map, current_sym, current_depth, output, gram):
         depths = [current_depth]

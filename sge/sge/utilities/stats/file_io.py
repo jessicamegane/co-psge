@@ -67,17 +67,19 @@ def save_best_ind_to_file(stats, ind, end=False, name="best"):
     filename = path.join(params['FILE_PATH'], (str(name) + ".txt"))
     savefile = open(filename, 'w')
     savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
-    savefile.write("Phenotype:\n" + str(ind.phenotype) + "\n\n")
-    savefile.write("Genotype:\n" + str(ind.genome) + "\n")
-    savefile.write("Tree:\n" + str(ind.tree) + "\n")
+    savefile.write("Phenotype:\n" + str(ind['phenotype']) + "\n\n")
+    savefile.write("Genotype:\n" + str(ind['genotype']) + "\n")
+    # TODO: dei skip nas trees
+    # savefile.write("Tree:\n" + str(ind['tree']) + "\n")
+    savefile.write("Individual grammar:\n" + str(ind['pcfg']))
     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
         if end:
-            savefile.write("\nTraining fitness:\n" + str(ind.training_fitness))
-            savefile.write("\nTest fitness:\n" + str(ind.test_fitness))
+            savefile.write("\nTraining fitness:\n" + str(ind['fitness']))
+            savefile.write("\nTest fitness:\n" + str(ind['other_info']['test_error']))
         else:
-            savefile.write("\nFitness:\n" + str(ind.fitness))
+            savefile.write("\nFitness:\n" + str(ind['fitness']))
     else:
-        savefile.write("\nFitness:\n" + str(ind.fitness))
+        savefile.write("\nFitness:\n" + str(ind['fitness']))
     savefile.close()
 
 
