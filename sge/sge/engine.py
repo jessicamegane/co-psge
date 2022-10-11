@@ -82,8 +82,8 @@ def mutation_prob_mutation(ind):
     gram = ind['mutation_prob']
     new_p = []
     for p in gram:
-        if random.random() < params['PROB_MUTATION_PROBS']:
-            gauss = random.gauss(0.0,params['GAUSS_SD'])
+        if np.random.uniform() < params['PROB_MUTATION_PROBS']:
+            gauss = np.random.normal(0.0,params['GAUSS_SD'])
             # TODO: no futuro criar bounds
             p = max(p+gauss,0)
             p = min(p,1)
