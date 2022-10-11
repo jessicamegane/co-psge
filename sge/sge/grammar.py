@@ -1,5 +1,4 @@
 import re
-import random
 from sge.utilities import ordered_set
 import json
 import numpy as np
@@ -357,7 +356,7 @@ get_non_recursive_productions = _inst.get_non_recursive_productions
 get_mutation_prob = _inst.get_mutation_prob
 
 if __name__ == "__main__":
-    random.seed(42)
+    np.random.seed(42)
     g = Grammar("grammars/regression.txt", 9)
     genome = [[0], [0, 3, 3], [0], [], [1, 1]]
     mapping_numbers = [0] * len(genome)

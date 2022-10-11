@@ -1,5 +1,4 @@
-import random
-from numpy import cos, sin
+import numpy as np
 import math
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 
@@ -17,7 +16,7 @@ class SymbolicRegression():
         self.__test_set = None
         self.__number_of_variables = 1
         self.__invalid_fitness = invalid_fitness
-        self.partition_rng = random.Random()
+        self.partition_rng = np.random.uniform()
         self.function = function
         self.has_test_set = has_test_set
         self.readpolynomial()
