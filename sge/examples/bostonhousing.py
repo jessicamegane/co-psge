@@ -1,4 +1,3 @@
-import random
 from sge.parameters import params
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 from numpy import cos, sin
