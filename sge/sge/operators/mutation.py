@@ -19,8 +19,6 @@ def mutate(p, pmutation):
                 codon = min(codon,1.0)
                 codon = max(codon,0.0)
                 if p['tree_depth'] >= grammar.get_max_depth():
-
-                    
                     prob_non_recursive = 0.0
                     for rule in grammar.get_shortest_path()[(nt,'NT')][1:]:
                         index = grammar.get_dict()[nt].index(rule)
@@ -28,7 +26,11 @@ def mutate(p, pmutation):
                     prob_aux = 0.0
                     for rule in grammar.get_shortest_path()[(nt,'NT')][1:]:
                         index = grammar.get_dict()[nt].index(rule)
-                        new_prob = p['pcfg'][grammar.get_index_of_non_terminal()[nt],index] / prob_non_recursive
+                        if prob_non_recursive == 0.0: 
+                            # when the probability of choosing the symbol is 0
+                            new_prob = 1.0 / len(grammar.get_shortest_path()[(nt,'NT')][1:])
+                        else:
+                            new_prob = p['pcfg'][grammar.get_index_of_non_terminal()[nt],index] / prob_non_recursive
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index

@@ -245,11 +245,15 @@ class Grammar:
                     prob_non_recursive = 0.0
                     for rule in self.shortest_path[current_sym][1:]:
                         index = self.grammar[current_sym[0]].index(rule)
-                        prob_non_recursive += self.pcfg[self.index_of_non_terminal[current_sym[0]],index]
+                        prob_non_recursive += gram[self.index_of_non_terminal[current_sym[0]],index]
                     prob_aux = 0.0
                     for rule in self.shortest_path[current_sym][1:]:
                         index = self.grammar[current_sym[0]].index(rule)
-                        new_prob = self.pcfg[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
+                        if prob_non_recursive == 0.0: 
+                            # when the probability of choosing the symbol is 0
+                            new_prob = 1.0 / len(self.shortest_path[current_sym][1:])
+                        else:
+                            new_prob = gram[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
