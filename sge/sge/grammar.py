@@ -27,6 +27,7 @@ class Grammar:
         self.pcfg_mask = None
         self.pcfg_path = None
         self.index_of_non_terminal = {}
+        self.shortest_path = {}
 
     def set_path(self, grammar_path):
         self.grammar_file = grammar_path
@@ -93,20 +94,48 @@ class Grammar:
                         if left_side not in self.grammar:
                             self.grammar[left_side] = temp_productions
         
-        self.compute_non_recursive_options()
-
+        # self.compute_non_recursive_options()
         if self.pcfg_path is not None:
             # load PCFG probabilities from json file. List of lists, n*n, with n = max number of production rules of a NT
             with open(self.pcfg_path) as f:
                 self.pcfg = np.array(json.load(f))
         else:
             self.generate_uniform_pcfg()
+        self.find_shortest_path()
 
 
-    def create_counter(self):
-        self.counter = dict.fromkeys(self.grammar.keys(),[])
-        for k in self.counter.keys():
-            self.counter[k] = [0] * len(self.grammar[k])
+    def find_shortest_path(self):
+        for nt in self.grammar.keys():
+            depth = self.minimum_path_calc((nt,'NT'))
+            
+    def minimum_path_calc(self, current_symbol):
+        if current_symbol[1] == self.T:
+            return 0
+        else:
+            for derivation_option in self.grammar[current_symbol[0]]:
+                max_depth = 0
+                if current_symbol not in derivation_option:
+                    for symbol in derivation_option:
+
+                        depth = self.minimum_path_calc(symbol)
+                        depth += 1
+                        if depth > max_depth:
+                            max_depth = depth
+
+                    if current_symbol not in self.shortest_path:
+                        self.shortest_path[current_symbol] = [max_depth]
+                        self.shortest_path[current_symbol].append(derivation_option)
+                    else:
+                        if max_depth < self.shortest_path[current_symbol][0]:
+                            self.shortest_path[current_symbol] = [max_depth]
+                            if derivation_option not in self.shortest_path[current_symbol]:
+                                self.shortest_path[current_symbol].append(derivation_option)
+                        if max_depth == self.shortest_path[current_symbol][0]:
+                            if derivation_option not in self.shortest_path[current_symbol]:
+                                self.shortest_path[current_symbol].append(derivation_option)
+
+            return self.shortest_path[current_symbol][0]
+                    
 
     def generate_uniform_pcfg(self):
         """
@@ -164,14 +193,14 @@ class Grammar:
         codon = np.random.uniform()
 
         if current_depth > self.max_init_depth:
-            non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(gram, symbol)
+            prob_non_recursive = 0.0
+            for rule in self.shortest_path[(symbol,'NT')][1:]:
+                index = self.grammar[symbol].index(rule)
+                prob_non_recursive += self.pcfg[self.index_of_non_terminal[symbol],index]
             prob_aux = 0.0
-
-            for index, option in non_recursive_prods:
-                if prob_non_recursive == 0.0:
-                    new_prob = 1.0 / len(non_recursive_prods)
-                else:
-                    new_prob = (gram[self.index_of_non_terminal[symbol],index] * 1.0) / prob_non_recursive
+            for rule in self.shortest_path[(symbol,'NT')][1:]:
+                index = self.grammar[symbol].index(rule)
+                new_prob = self.pcfg[self.index_of_non_terminal[symbol],index] / prob_non_recursive
                 prob_aux += new_prob
                 if codon <= round(prob_aux,3):
                     expansion_possibility = index
@@ -213,13 +242,14 @@ class Grammar:
             if positions_to_map[current_sym_pos] >= len(mapping_rules[current_sym_pos]):
                 # Experiencia
                 if current_depth > self.max_depth:
-                    non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(gram, current_sym[0])
+                    prob_non_recursive = 0.0
+                    for rule in self.shortest_path[current_sym][1:]:
+                        index = self.grammar[current_sym[0]].index(rule)
+                        prob_non_recursive += self.pcfg[self.index_of_non_terminal[current_sym[0]],index]
                     prob_aux = 0.0
-                    for index, option in non_recursive_prods:
-                        if prob_non_recursive == 0.0:
-                            new_prob = 1.0 / len(non_recursive_prods)
-                        else:
-                            new_prob = ((gram[self.index_of_non_terminal[current_sym[0]],index] * 1.0) / prob_non_recursive)
+                    for rule in self.shortest_path[current_sym][1:]:
+                        index = self.grammar[current_sym[0]].index(rule)
+                        new_prob = self.pcfg[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
@@ -236,13 +266,14 @@ class Grammar:
                 # re-mapping with new probabilities                
                 codon = mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]][1]
                 if current_depth > self.max_depth:
-                    non_recursive_prods, prob_non_recursive = self.get_non_recursive_productions(gram, current_sym[0])    
+                    prob_non_recursive = 0.0
+                    for rule in self.shortest_path[(current_sym[0],'NT')][1:]:
+                        index = self.grammar[current_sym[0]].index(rule)
+                        prob_non_recursive += self.pcfg[self.index_of_non_terminal[current_sym[0]],index]
                     prob_aux = 0.0
-                    for index, option in non_recursive_prods:
-                        if prob_non_recursive == 0.0:
-                            new_prob = 1.0 / len(non_recursive_prods)
-                        else:
-                            new_prob = ((gram[self.index_of_non_terminal[current_sym[0]],index] * 1.0) / prob_non_recursive)
+                    for rule in self.shortest_path[(current_sym[0],'NT')][1:]:
+                        index = self.grammar[current_sym[0]].index(rule)
+                        new_prob = self.pcfg[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
@@ -281,6 +312,9 @@ class Grammar:
 
     def get_pcfg(self):
         return self.pcfg
+
+    def get_shortest_path(self):
+        return self.shortest_path
 
     @staticmethod
     def python_filter(txt):
@@ -346,6 +380,7 @@ start_rule = _inst.get_start_rule
 set_max_tree_depth = _inst.set_max_tree_depth
 set_min_init_tree_depth = _inst.set_min_init_tree_depth
 get_max_depth = _inst.get_max_depth
+get_shortest_path = _inst.get_shortest_path
 get_non_recursive_options = _inst.get_non_recursive_options
 get_dict = _inst.get_dict
 get_pcfg = _inst.get_pcfg
@@ -354,7 +389,7 @@ get_index_of_non_terminal = _inst.get_index_of_non_terminal
 ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
 python_filter = _inst.python_filter
-get_non_recursive_productions = _inst.get_non_recursive_productions
+# get_non_recursive_productions = _inst.get_non_recursive_productions
 
 if __name__ == "__main__":
     np.random.seed(42)

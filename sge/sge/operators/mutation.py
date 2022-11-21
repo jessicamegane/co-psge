@@ -19,15 +19,17 @@ def mutate(p, pmutation):
                 codon = min(codon,1.0)
                 codon = max(codon,0.0)
                 if p['tree_depth'] >= grammar.get_max_depth():
-                    non_recursive_prods, prob_non_recursive = grammar.get_non_recursive_productions(p['pcfg'],nt)    
-                    prob_aux = 0.0
-                    for index, option in non_recursive_prods:
-                        if prob_non_recursive == 0.0:
-                            new_prob = 1.0 / len(non_recursive_prods)
-                        else:
-                            new_prob = (p['pcfg'][grammar.get_index_of_non_terminal()[nt],index] * 1.0) / prob_non_recursive
-                        prob_aux += new_prob
 
+                    
+                    prob_non_recursive = 0.0
+                    for rule in grammar.get_shortest_path()[(nt,'NT')][1:]:
+                        index = grammar.get_dict()[nt].index(rule)
+                        prob_non_recursive += p['pcfg'][grammar.get_index_of_non_terminal()[nt],index]
+                    prob_aux = 0.0
+                    for rule in grammar.get_shortest_path()[(nt,'NT')][1:]:
+                        index = grammar.get_dict()[nt].index(rule)
+                        new_prob = p['pcfg'][grammar.get_index_of_non_terminal()[nt],index] / prob_non_recursive
+                        prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
