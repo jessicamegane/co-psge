@@ -1,0 +1,11 @@
+#core
+<start> ::= <expr_vs_var>
+<expr_vs_var> ::= <expr> | <var>
+<expr> ::= <expr_op> | <pre_op>(<expr_vs_var>)
+<expr_op> ::= <expr_vs_var><op><expr_vs_var> | (<expr_vs_var><op><expr_vs_var>)
+<op> ::= +|-|*|\eb_div_\eb
+<pre_op> ::= <trig_op> | <exp_log_op> | _inv_
+<trig_op> ::= sin | cos
+<exp_log_op> ::= _exp_ | _log_
+<var> ::= <var_x> | 1.0
+<var_x> ::= x[0] | x[1]
