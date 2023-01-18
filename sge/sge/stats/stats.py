@@ -287,7 +287,7 @@ def update_stats(individuals, end):
     :param end: Boolean flag for indicating the end of an evolutionary run.
     :return: Nothing.
     """
-    # AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+    # TODO: AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
     if not end:
         # Time Stats
         trackers.time_list.append(time() - stats['time_adjust'])
@@ -312,11 +312,11 @@ def update_stats(individuals, end):
     stats['median_genome_length'] = np.median(genome_lengths)
 
     # Used Codon Stats
-    # codons = [i.used_codons for i in individuals]
-    # stats['max_used_codons'] = np.nanmax(codons)
-    # stats['ave_used_codons'] = np.nanmean(codons)
-    # stats['min_used_codons'] = np.nanmin(codons)
-    # stats['median_used_codons'] = np.median(codons)
+    codons = [i['used_codons'] for i in individuals]
+    stats['max_used_codons'] = np.nanmax(codons)
+    stats['ave_used_codons'] = np.nanmean(codons)
+    stats['min_used_codons'] = np.nanmin(codons)
+    stats['median_used_codons'] = np.median(codons)
 
     # Tree Depth Stats
     depths = [i['tree_depth'] for i in individuals]
@@ -324,49 +324,51 @@ def update_stats(individuals, end):
     stats['ave_tree_depth'] = np.nanmean(depths)
     stats['min_tree_depth'] = np.nanmin(depths)
 
-    # TODO: gardar nós algures no mapeamento 
     # Tree Node Stats
     nodes = [i['nodes'] for i in individuals]
     stats['max_tree_nodes'] = np.nanmax(nodes)
     stats['ave_tree_nodes'] = np.nanmean(nodes)
     stats['min_tree_nodes'] = np.nanmin(nodes)
 
-    # TODO: SKIP
-    # if not hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
-    #     # Fitness Stats
-    #     best = trackers.best_ever
-    #     stats['best_fitness'] = best['fitness']
-    #     stats['best_cases_solved_train'] = sum(best.test_cases)
-    #     stats['best_cases_solved_train_percent'] = sum(best.test_cases) * 1. / len(best.test_cases)
+    if not hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
+        # Fitness Stats
+        # TODO: DESCOMENTAR ISTO SE PRECISAR
+        # -------------------------
+        #  
+        best = trackers.best_ever
+        stats['best_fitness'] = best['fitness']
+        # stats['best_cases_solved_train'] = sum(best.test_cases)
+        # stats['best_cases_solved_train_percent'] = sum(best.test_cases) * 1. / len(best.test_cases)
 
-    #     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
-    #         best_copy = best.deep_copy()
-    #         stats['best_fitness_test'] = params['FITNESS_FUNCTION'](best_copy, dist='test')
-    #         stats['best_cases_solved_test'] = sum(best_copy.test_cases)
-    #         stats['best_cases_solved_test_percent'] = sum(best_copy.test_cases) * 1. / len(best_copy.test_cases)
-        
-    #     fitnesses = [i.fitness for i in individuals]
-    #     try:
-    #         stats['ave_fitness'] = np.nanmean(fitnesses, axis=0)
-    #         stats['median_fitness'] = np.median(fitnesses, axis=0)
-    #     except:
-    #         try:
-    #             # numpy nanmean throws an error with very large ints
-    #             # possibly this is a consequence of unlimited size of
-    #             # ints in python 3.x
-    #             tmp_list = []
-    #             for f in fitnesses:
-    #                 if f > 17999999999999999999:
-    #                     tmp_list.append(17999999999999999999)
-    #                 else:
-    #                     tmp_list.append(f)
-    #             np.nanmean(tmp_list, axis=0)
-    #             stats['ave_fitness'] = np.nanmean(tmp_list, axis=0)
-    #             stats['median_fitness'] = np.median(tmp_list, axis=0)
-    #         except:
-    #             stats['ave_fitness'] = -1. * sys.maxint
-    #             stats['median_fitness'] = -1. * sys.maxint
-    #             print("Critical error in fitness stats: ", fitnesses)
+        # if hasattr(params['FITNESS_FUNCTION'], "training_test"):
+        #     best_copy = best.deep_copy()
+        #     stats['best_fitness_test'] = params['FITNESS_FUNCTION'](best_copy, dist='test')
+        #     stats['best_cases_solved_test'] = sum(best_copy.test_cases)
+        #     stats['best_cases_solved_test_percent'] = sum(best_copy.test_cases) * 1. / len(best_copy.test_cases)
+        # -----------------------------
+
+        fitnesses = [i['fitness'] for i in individuals]
+        try:
+            stats['ave_fitness'] = np.nanmean(fitnesses, axis=0)
+            stats['median_fitness'] = np.median(fitnesses, axis=0)
+        except:
+            try:
+                # numpy nanmean throws an error with very large ints
+                # possibly this is a consequence of unlimited size of
+                # ints in python 3.x
+                tmp_list = []
+                for f in fitnesses:
+                    if f > 17999999999999999999:
+                        tmp_list.append(17999999999999999999)
+                    else:
+                        tmp_list.append(f)
+                np.nanmean(tmp_list, axis=0)
+                stats['ave_fitness'] = np.nanmean(tmp_list, axis=0)
+                stats['median_fitness'] = np.median(tmp_list, axis=0)
+            except:
+                stats['ave_fitness'] = -1. * sys.maxint
+                stats['median_fitness'] = -1. * sys.maxint
+                print("Critical error in fitness stats: ", fitnesses)
     
     # Programming Metrics Stats
     if hasattr(params['FITNESS_FUNCTION'], "progsys") and params['FITNESS_FUNCTION'].progsys:

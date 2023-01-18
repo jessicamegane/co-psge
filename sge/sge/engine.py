@@ -14,7 +14,8 @@ from sge.parameters import (
 )
 import copy
 import numpy as np
-from sge.stats.stats import get_stats, stats
+from sge.stats.stats import get_stats, stats, trackers
+
 
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
@@ -38,6 +39,12 @@ def evaluate(ind, eval_func):
     ind['other_info'] = other_info
     ind['mapping_values'] = mapping_values
     ind['tree_depth'] = tree_depth
+    used_codons = 0
+    for l in ind['genotype']:
+        used_codons += len(l)
+    ind['used_codons'] = used_codons
+    if ind['phenotype'] not in trackers.cache:
+        trackers.cache[ind['phenotype']] = ind['fitness']
 
 
 def setup(parameters_file_path = None):
@@ -115,5 +122,6 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
 
         population = new_population
         it += 1
+        input()
     get_stats(population, end=True)
 

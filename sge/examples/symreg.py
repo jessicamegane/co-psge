@@ -2,6 +2,7 @@ from cmath import isnan
 import random
 import numpy as np
 import math
+from sge.stats.stats import stats
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 
 
@@ -122,6 +123,7 @@ class SymbolicRegression():
                 result = eval(individual, globals(), {"x": fit_case[:-1]})
                 pred_error += (case_output - result)**2
             except (OverflowError, ValueError) as e:
+                stats['invalids'] += 1
                 return self.__invalid_fitness
         return pred_error
 
@@ -135,6 +137,7 @@ class SymbolicRegression():
             error = _sqrt_( error /self.__RRSE_train_denominator)
 
             if error is None or math.isnan(error):
+                stats['invalids'] += 1
                 error = self.__invalid_fitness
 
             if self.__test_set is not None:
@@ -145,6 +148,7 @@ class SymbolicRegression():
 
             return error, {'generation': 0, "evals": 1, "test_error": test_error}
         except RecursionError:
+            stats['invalids'] += 1
             return self.__invalid_fitness, {'generation': 0, "evals": 1, "test_error": test_error}
 
 if __name__ == "__main__":
