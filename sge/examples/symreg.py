@@ -1,8 +1,7 @@
 from cmath import isnan
-import random
-import numpy as np
 import math
 from sge.stats.stats import stats
+from numpy import cos, sin, random
 from sge.utilities.protected_math import _log_, _div_, _exp_, _inv_, _sqrt_, protdiv
 
 
@@ -19,7 +18,7 @@ class SymbolicRegression():
         self.__test_set = None
         self.__number_of_variables = 1
         self.__invalid_fitness = invalid_fitness
-        self.partition_rng = random.Random()
+        self.partition_rng = random.uniform()
         self.function = function
         self.has_test_set = has_test_set
         self.readpolynomial()
@@ -122,7 +121,7 @@ class SymbolicRegression():
             try:
                 result = eval(individual, globals(), {"x": fit_case[:-1]})
                 pred_error += (case_output - result)**2
-            except (OverflowError, ValueError) as e:
+            except (OverflowError, ValueError, FloatingPointError) as e:
                 stats['invalids'] += 1
                 return self.__invalid_fitness
         return pred_error

@@ -1,8 +1,8 @@
-import random
+from numpy import random
 import copy
 
 
 def tournament(population, tsize=3):
-    pool = random.sample(population, tsize)
-    pool.sort(key=lambda i: i['fitness'])
+    pool = random.choice(population, tsize)
+    pool = sorted(pool, key=lambda i: i['fitness'])
     return copy.deepcopy(pool[0])
