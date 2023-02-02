@@ -104,6 +104,7 @@ class Grammar:
             self.generate_uniform_pcfg()
         self.mutation_prob = [0.1] * len(self.grammar.keys())
 
+
     def get_mutation_prob(self):
         return self.mutation_prob
     def generate_uniform_pcfg(self):
@@ -201,6 +202,7 @@ class Grammar:
         return output, max_depth
 
     def _recursive_mapping(self, mapping_rules, positions_to_map, current_sym, current_depth, output, gram):
+        print(current_sym, current_depth)
         depths = [current_depth]
         if current_sym[1] == self.T:
             output.append(current_sym[0])
