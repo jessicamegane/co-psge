@@ -1,7 +1,7 @@
 import collections
 
 
-class OrderedSet(collections.abc.MutableSet):
+class OrderedSet():
     """
     From http://code.activestate.com/recipes/528878-ordered-set/
     """
