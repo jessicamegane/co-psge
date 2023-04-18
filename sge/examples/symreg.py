@@ -28,6 +28,8 @@ class SymbolicRegression():
         train_outputs = [entry[-1] for entry in self.__train_set]
         train_output_mean = float(sum(train_outputs)) / len(train_outputs)
         self.__RRSE_train_denominator = sum([(i - train_output_mean)**2 for i in train_outputs])
+        print(self.__RRSE_train_denominator)
+        input()
         if self.__test_set:
             test_outputs = [entry[-1] for entry in self.__test_set]
             test_output_mean = float(sum(test_outputs)) / len(test_outputs)
@@ -65,7 +67,7 @@ class SymbolicRegression():
                 for yy in drange(-5,5.4,0.4):
                     zz = pagiepolynomial(xx,yy)
                     l.append([xx,yy,zz])
-
+            
             self.__train_set=l
             self.training_set_size = len(self.__train_set)
             if self.has_test_set:

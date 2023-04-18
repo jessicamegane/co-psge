@@ -25,7 +25,11 @@ def save_progress_to_file(data):
 
 
 def save_step(generation, population):
-    c = json.dumps(population, cls=NumpyEncoder)
+    to_save = population
+    if not params['INCLUDE_GENOTYPE']:
+        exclude_keys = ['genotype']
+        to_save =  list(map(lambda d: {k: d[k] for k in set(list(d.keys())) - set(exclude_keys)}, population))
+    c = json.dumps(to_save, cls=NumpyEncoder)
     open('%s/run_%d/iteration_%d.json' % (params['EXPERIMENT_NAME'], params['RUN'], generation), 'a').write(c)
 
 
