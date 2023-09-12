@@ -95,7 +95,7 @@ class Grammar:
                         if left_side not in self.grammar:
                             self.grammar[left_side] = temp_productions
         
-        # self.compute_non_recursive_options()
+        self.compute_non_recursive_options()
         if self.pcfg_path is not None:
             # load PCFG probabilities from json file. List of lists, n*n, with n = max number of production rules of a NT
             with open(self.pcfg_path) as f:
@@ -103,11 +103,11 @@ class Grammar:
         else:
             self.generate_uniform_pcfg()
         self.mutation_prob = [0.1] * len(self.grammar.keys())
+        self.find_shortest_path()
 
 
     def get_mutation_prob(self):
         return self.mutation_prob
-        self.find_shortest_path()
 
 
     def find_shortest_path(self):
@@ -238,7 +238,6 @@ class Grammar:
         return output, max_depth
 
     def _recursive_mapping(self, mapping_rules, positions_to_map, current_sym, current_depth, output, gram):
-        print(current_sym, current_depth)
         depths = [current_depth]
         if current_sym[1] == self.T:
             output.append(current_sym[0])
@@ -400,7 +399,7 @@ get_index_of_non_terminal = _inst.get_index_of_non_terminal
 ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
 python_filter = _inst.python_filter
-# get_non_recursive_productions = _inst.get_non_recursive_productions
+get_non_recursive_productions = _inst.get_non_recursive_productions
 get_mutation_prob = _inst.get_mutation_prob
 # get_non_recursive_productions = _inst.get_non_recursive_productions
 
