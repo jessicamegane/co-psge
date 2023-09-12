@@ -4,7 +4,7 @@ import sge.logger as logger
 from datetime import datetime
 from tqdm import tqdm
 from sge.operators.recombination import crossover
-from sge.operators.mutation import mutate
+from sge.operators.mutation import mutate, mutate_level
 from sge.operators.selection import tournament
 from sge.parameters import (
     params,
@@ -17,7 +17,7 @@ import numpy as np
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
     tree_depth = grammar.recursive_individual_creation(genotype, grammar.start_rule()[0], 0, grammar.get_pcfg())
-    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg()}
+    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(), 'mutation_prob':grammar.get_mutation_prob() }
 
 
 def make_initial_population():
@@ -78,6 +78,19 @@ def mutationGrammar(ind):
                 break
     return ind
 
+def mutation_prob_mutation(ind):
+    gram = ind['mutation_prob']
+    new_p = []
+    for p in gram:
+        if np.random.uniform() < params['PROB_MUTATION_PROBS']:
+            gauss = np.random.normal(0.0,params['GAUSS_SD'])
+            # TODO: no futuro criar bounds
+            p = max(p+gauss,0)
+            p = min(p,1)
+        new_p.append(p)
+    ind['mutation_prob'] = new_p
+    return ind
+
 def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
     setup(parameters_file_path=parameters_file)
     population = list(make_initial_population())
@@ -102,8 +115,11 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             else:
                 ni = tournament(population, params['TSIZE'])
             
-            ni = mutationGrammar(ni)
-            ni = mutate(ni, params['PROB_MUTATION'])
+            if params["MUTATE_GRAMMAR"]:
+                ni = mutationGrammar(ni)
+            ni = mutation_prob_mutation(ni)
+            # ni = mutate(ni, params['PROB_MUTATION'])
+            ni = mutate_level(ni)
             new_population.append(ni)
 
         population = new_population

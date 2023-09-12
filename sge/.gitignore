@@ -4,3 +4,8 @@
 .pytest_cache
 *.pyc
 dumps/*
+mut_level_compare/*
+mut_level_parameters/*
+mut_level_params/*
+mut_level/*
+mutation_level/*

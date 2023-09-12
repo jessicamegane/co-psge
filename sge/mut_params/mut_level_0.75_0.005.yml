@@ -1,0 +1,18 @@
+POPSIZE: 1000
+GENERATIONS: 100
+ELITISM: 100                   # number of individuals that survive
+PROB_CROSSOVER: 0.9
+PROB_MUTATION: 0.05
+TSIZE: 3
+GRAMMAR: 'grammars/regression_extended.pybnf'
+EXPERIMENT_NAME: 'mutation_level_extended/prob_mut_0.75_gauss_sd_0.005/'
+INCLUDE_GENOTYPE: False
+SAVE_STEP: 1
+VERBOSE: True
+MIN_TREE_DEPTH: 10
+MAX_TREE_DEPTH: 10
+NORMAL_DIST_SD: 0.5
+PROB_MUTATION_GRAMMAR: 0.05
+PROB_MUTATION_PROBS: 0.75
+GAUSS_SD: 0.005
+MUTATE_GRAMMAR: True
