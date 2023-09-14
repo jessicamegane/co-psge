@@ -133,7 +133,7 @@ def set_parameters(arguments):
                         dest='MUTATE_GRAMMAR',
                         type=bool,
                         help='Specifies if we want the grammar to mutate')
-     parser.add_argument('--delay',
+    parser.add_argument('--delay',
                         dest='DELAY',
                         type=str,
                         help='Specifies when to mutate the grammar opt: true, false, original')
