@@ -102,6 +102,9 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
                 evaluate(i, evaluation_function)      
         population.sort(key=lambda x: x['fitness'])
 
+        if params['DELAY'] == "false":
+            while len(population[:params['ELITISM']]) < params['POPSIZE']:
+                ni = mutationGrammar(ni)       
         # logger saves the grammar of the best individual
         
         logger.evolution_progress(it, population)
@@ -115,11 +118,17 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             else:
                 ni = tournament(population, params['TSIZE'])
             
-            if params["MUTATE_GRAMMAR"]:
-                ni = mutationGrammar(ni)
-            ni = mutation_prob_mutation(ni)
+            
+            if params["DELAY"] == "original":
+                ni = mutationGrammar(ni)   
+
             # ni = mutate(ni, params['PROB_MUTATION'])
+            ni = mutation_prob_mutation(ni)
             ni = mutate_level(ni)
+
+            if params["DELAY"] == "true":
+                ni = mutationGrammar(ni)         
+
             new_population.append(ni)
 
         population = new_population
