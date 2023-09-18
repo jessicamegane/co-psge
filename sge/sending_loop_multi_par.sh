@@ -9,7 +9,7 @@
 # Declare arrays 
 DEV=("1.0" "0.1" "0.01" "0.001")
 META=("1.0" "0.1" "0.01" "0.001") 
-DELAY=("true" "false" "original")
+DELAY=("True" "False" "original")
 
 # Nested loops to iterate over permutations
 for dev in "${DEV[@]}"
