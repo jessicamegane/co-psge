@@ -9,8 +9,7 @@
 # Declare arrays 
 DEV=("1.0" "0.1" "0.01" "0.001")
 META=("1.0" "0.1" "0.01" "0.001") 
-DELAY=("True" "False")
-REMAP=("True" "False")
+DELAY=("true" "false" "original")
 
 # Nested loops to iterate over permutations
 for dev in "${DEV[@]}"
@@ -19,11 +18,8 @@ do
   do 
     for delay in "${DELAY[@]}"
     do
-      for remap in "${REMAP[@]}"
-      do
-        echo "$dev $meta $gram"
-	      sbatch sending_trillions.sh $dev $meta $dealy $remap
-      done
+      echo "$dev $meta $gram"
+      sbatch sending_trillions.sh $dev $meta $delay 
     done
   done
 done
