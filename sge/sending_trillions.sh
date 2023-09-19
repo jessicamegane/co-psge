@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --time=12:10:00
 #SBATCH --mem=500MB
-#SBATCH --job-name=bt_sending_loop
-#SBATCH --output=logs/sending_loop%j.log
+#SBATCH --job-name=co-psge_job
+#SBATCH --output=logs/co-psge_job%j.log
 
 
 export PATH=$HOME/.local/bin:$PATH
