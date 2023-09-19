@@ -18,7 +18,7 @@ do
   do 
     for delay in "${DELAY[@]}"
     do
-      echo "dev: $dev, meta: $meta, gram: $gram"
+      echo "dev: $dev, meta: $meta, delay: $delay"
       sbatch sending_trillions.sh $dev $meta $delay 
     done
   done
