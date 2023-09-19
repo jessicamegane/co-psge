@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=9:10:00
+#SBATCH --time=12:10:00
 #SBATCH --mem=500MB
 #SBATCH --job-name=bt_sending_loop
 #SBATCH --output=logs/sending_loop%j.log
