@@ -1,19 +1,32 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python: Module",
-            "type": "python",
-            "request": "launch",
-            "module": "examples.symreg",
-            "args": [
-                "--parameters=parameters/standard.yml",
-                "--seed=2" 
-              ],
-            "cwd": "/Users/soren/Work/co-psge/sge"
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Run for cluster",
+      "type": "python",
+      "cwd": "${workspaceRoot}/sge",
+      "request": "launch",
+      "program": "examples/symreg.py",
+      "console": "integratedTerminal",
+      "args": ["--experiment_name", "dumps/debug", "--parameters",
+       "parameters/standard.yml", "--grammars/regression.pybnf",
+        "--gauss_sd", "0.1", "--prob_mutation_probs", "0.1",
+         "--delay", "False", "--remap", "False"],
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/sge/"
         }
-    ]
+    },
+    {
+      "name": "Python: Module",
+      "type": "python",
+      "request": "launch",
+      "module": "examples.symreg",
+      "args": ["--parameters=parameters/standard.yml", "--seed=2"],
+      "cwd": "/Users/soren/Work/co-psge/sge"
+    }
+  ]
 }
