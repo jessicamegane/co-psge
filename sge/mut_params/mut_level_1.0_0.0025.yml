@@ -7,7 +7,7 @@ TSIZE: 3
 GRAMMAR: 'grammars/regression_extended.pybnf'
 EXPERIMENT_NAME: 'mutation_level_extended/prob_mut_1.0_gauss_sd_0.0025/'
 INCLUDE_GENOTYPE: False
-SAVE_STEP: 1
+SAVE_STEP: 10
 VERBOSE: True
 MIN_TREE_DEPTH: 10
 MAX_TREE_DEPTH: 10

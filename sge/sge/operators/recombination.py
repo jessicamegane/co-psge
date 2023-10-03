@@ -21,4 +21,4 @@ def crossover(p1, p2):
 
     # compute nem individual
     _, tree_depth = grammar.mapping(genotype, gram, mapping_values)
-    return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'mutation_prob': mutation_prob}
+    return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'mutation_prob': mutation_prob, 'has_mutated': True}
