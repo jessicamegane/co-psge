@@ -23,7 +23,7 @@ do
       do
         for run in "${RUN[@]}"
         do
-          echo "dev: $dev, meta: $meta, delay: $delay, start_mut_rate: $, run: $run"
+          echo "dev: $dev, meta: $meta, delay: $delay, start_mut_rate: $mut_r, run: $run"
           sbatch sending_trillions.sh $dev $meta $delay $mut_r $run
         done
       done
