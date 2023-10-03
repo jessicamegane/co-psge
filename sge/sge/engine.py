@@ -17,7 +17,7 @@ import numpy as np
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
     tree_depth = grammar.recursive_individual_creation(genotype, grammar.start_rule()[0], 0, grammar.get_pcfg())
-    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(), 'mutation_prob':grammar.get_mutation_prob() }
+    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(), 'mutation_prob':grammar.get_mutation_prob(), 'has_mutated':False }
 
 
 def make_initial_population():
@@ -35,6 +35,7 @@ def evaluate(ind, eval_func):
     ind['other_info'] = other_info
     ind['mapping_values'] = mapping_values
     ind['tree_depth'] = tree_depth
+    ind['has_mutated']= False
 
 
 def setup(parameters_file_path = None):
@@ -56,7 +57,7 @@ def setup(parameters_file_path = None):
 
 
 def mutationGrammar(ind):
-    ind['fitness'] = None
+    ind['has_mutated'] = True
     gram = ind['pcfg']
     mask = copy.deepcopy(grammar.get_mask())
     rows, columns = gram.shape
@@ -95,18 +96,20 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
     setup(parameters_file_path=parameters_file)
     population = list(make_initial_population())
     it = 0
+    for i in tqdm(population):
+        evaluate(i, evaluation_function)      
 
     while it <= params['GENERATIONS']:  
         for i in tqdm(population):
-            if i['fitness'] is None:
+            if i['has_mutated']:
                 evaluate(i, evaluation_function)      
         population.sort(key=lambda x: x['fitness'])
 
         if params['DELAY'] == 'False':
-            while len(population[:params['ELITISM']]) < params['POPSIZE']:
+            for ni in population[:params['ELITISM']]:
                 ni = mutationGrammar(ni)       
+       
         # logger saves the grammar of the best individual
-        
         logger.evolution_progress(it, population)
 
         new_population = population[:params['ELITISM']]

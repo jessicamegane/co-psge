@@ -80,7 +80,7 @@ def mutate_levelx(p):
 
 def mutate_level(p):
     p = copy.deepcopy(p)
-    p['fitness'] = None
+    p['has_mutated'] = True
     pmutation = p['mutation_prob']
     size_of_genes = grammar.count_number_of_options_in_production()
     mutable_genes = [index for index, nt in enumerate(grammar.get_non_terminals()) if size_of_genes[nt] != 1 and len(p['genotype'][index]) > 0]
