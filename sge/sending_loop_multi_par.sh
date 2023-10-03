@@ -7,9 +7,10 @@
 
 
 # Declare arrays 
-DEV=("1.0" "0.1" "0.01" "0.001")
-META=("1.0" "0.1" "0.01" "0.001") 
+DEV=("0.01" "0.001")
+META=("1.0" "0.1") 
 DELAY=("True" "False" "original")
+MUT_R=("0.1" "0.01")
 
 # Nested loops to iterate over permutations
 for dev in "${DEV[@]}"

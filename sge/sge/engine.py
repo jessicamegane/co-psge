@@ -51,7 +51,7 @@ def setup(parameters_file_path = None):
     grammar.set_path(params['GRAMMAR'])
     if params['GRAMMAR_PROBS'] is not None:
         grammar.set_pcfg_path(params['GRAMMAR_PROBS'])
-    grammar.read_grammar()
+    grammar.read_grammar(params['PROB_MUTATION'])
     grammar.set_max_tree_depth(params['MAX_TREE_DEPTH'])
     grammar.set_min_init_tree_depth(params['MIN_TREE_DEPTH'])
 

@@ -51,7 +51,7 @@ class Grammar:
     def get_max_init_depth(self):
         return self.max_init_depth
 
-    def read_grammar(self):
+    def read_grammar(self, mut_p = 0.1):
         """
         Reads a Grammar in the BNF format and converts it to a python dictionary
         This method was adapted from PonyGE version 0.1.3 by Erik Hemberg and James McDermott
@@ -102,7 +102,7 @@ class Grammar:
                 self.pcfg = np.array(json.load(f))
         else:
             self.generate_uniform_pcfg()
-        self.mutation_prob = [0.1] * len(self.grammar.keys())
+        self.mutation_prob = [mut_p] * len(self.grammar.keys())
         self.find_shortest_path()
 
 
