@@ -1,0 +1,5 @@
+<start> ::= <expr>
+<expr> ::= <expr><op><expr>|(<expr><op><expr>)|<pre_op>(<expr>)|<var>
+<op> ::= +|-|*|\eb_div\eb
+<pre_op> ::= _sin|_cos|_exp|_log|_inv
+<var> ::= x|1.0|y
