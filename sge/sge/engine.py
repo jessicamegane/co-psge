@@ -44,7 +44,7 @@ def setup(parameters_file_path = None):
     set_parameters(sys.argv[1:])
     if params['SEED'] is None:
         params['SEED'] = int(datetime.now().microsecond)
-    params['EXPERIMENT_NAME'] += "/" + "prob_mut_probs_" + str(params['PROB_MUTATION_PROBS']) +"/gauss_" + str(params['GAUSS_SD']) + "/delay_" + str(params['DELAY']) 
+    params['EXPERIMENT_NAME'] += "/" + "start_mut_prob_" + str(params['PROB_MUTATION']) + "/" + "prob_mut_probs_" + str(params['PROB_MUTATION_PROBS']) +"/gauss_" + str(params['GAUSS_SD']) + "/delay_" + str(params['DELAY']) 
     
     logger.prepare_dumps()
     np.random.seed(int(params['SEED']))
