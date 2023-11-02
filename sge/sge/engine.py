@@ -117,9 +117,7 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             
             if params["MUTATE_GRAMMAR"]:
                 ni = mutationGrammar(ni)
-            ni = mutation_prob_mutation(ni)
-            # ni = mutate(ni, params['PROB_MUTATION'])
-            ni = mutate_level(ni)
+            ni = mutate(ni, params['PROB_MUTATION'])
             new_population.append(ni)
 
         population = new_population
