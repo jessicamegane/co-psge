@@ -17,8 +17,11 @@ def crossover(p1, p2):
     # off spring inherits the grammar of the best fitted parent
     # TODO: change this in case of maximization problem
     gram = p1['pcfg'] if p1['fitness'] < p2['fitness'] else p2['pcfg']
-    mutation_prob = p1['mutation_prob'] if p1['fitness'] < p2['fitness'] else p2['mutation_prob']    
-
-    # compute nem individual
     _, tree_depth = grammar.mapping(genotype, gram, mapping_values)
-    return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'mutation_prob': mutation_prob}
+
+
+    if params['ADAPTIVE_MUTATION']:
+        mutation_prob = p1['mutation_prob'] if p1['fitness'] < p2['fitness'] else p2['mutation_prob']    
+        return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'mutation_probs': mutation_prob}
+    else:
+        return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram}

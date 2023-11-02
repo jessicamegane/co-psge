@@ -22,7 +22,6 @@ class Grammar:
         self.start_rule = None
         self.max_depth = None
         self.max_init_depth = None
-        self.mutation_prob = []
         self.max_number_prod_rules = 0
         self.pcfg = None
         self.pcfg_mask = None
@@ -233,7 +232,6 @@ class Grammar:
         return output, max_depth
 
     def _recursive_mapping(self, mapping_rules, positions_to_map, current_sym, current_depth, output, gram):
-        print(current_sym, current_depth)
         depths = [current_depth]
         if current_sym[1] == self.T:
             output.append(current_sym[0])
@@ -400,7 +398,6 @@ ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
 python_filter = _inst.python_filter
 # get_non_recursive_productions = _inst.get_non_recursive_productions
-get_mutation_prob = _inst.get_mutation_prob
 
 if __name__ == "__main__":
     np.random.seed(42)

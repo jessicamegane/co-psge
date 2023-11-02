@@ -17,8 +17,10 @@ import numpy as np
 def generate_random_individual():
     genotype = [[] for key in grammar.get_non_terminals()]
     tree_depth = grammar.recursive_individual_creation(genotype, grammar.start_rule()[0], 0, grammar.get_pcfg())
-    return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(), 'mutation_prob':grammar.get_mutation_prob() }
-
+    if params['ADAPTIVE_MUTATION']:
+        return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(), 'mutation_probs': [params['PROB_MUTATION'] for x in genotype] }
+    else:
+        return {'genotype': genotype, 'fitness': None, 'tree_depth' : tree_depth, 'pcfg': grammar.get_pcfg(),}
 
 def make_initial_population():
     for i in range(params['POPSIZE']):
@@ -79,15 +81,15 @@ def mutationGrammar(ind):
     return ind
 
 def mutation_prob_mutation(ind):
-    gram = ind['mutation_prob']
+    mutation_probabilities = ind['mutation_probs']
     new_p = []
-    for p in gram:
+    for nt in mutation_probabilities:
         if np.random.uniform() < params['PROB_MUTATION_PROBS']:
             gauss = np.random.normal(0.0,params['GAUSS_SD'])
-            p = max(p+gauss,0)
-            p = min(p,1)
-        new_p.append(p)
-    ind['mutation_prob'] = new_p
+            nt = max(nt+gauss,0)
+            nt = min(nt,1)
+        new_p.append(nt)
+    ind['mutation_probs'] = new_p
     return ind
 
 def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
@@ -122,6 +124,9 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
                 ni = mutate_level(ni)
             else:
                 ni = mutate(ni, params['PROB_MUTATION'])
+                
+            if params["MUTATE_GRAMMAR"]:
+                ni = mutationGrammar(ni)
             new_population.append(ni)
 
         population = new_population
