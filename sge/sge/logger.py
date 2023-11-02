@@ -6,7 +6,7 @@ import os
 
 def evolution_progress(generation, pop):
     fitness_samples = [i['fitness'] for i in pop]
-    data = '%4d\t%.6e\t%.6e\t%.6e' % (generation, np.min(fitness_samples), np.mean(fitness_samples), np.std(fitness_samples))
+    data = '%4d\t%.6e\t%.6e\t%.6e' % (generation, np.min(fitness_samples), np.nanmean(fitness_samples), np.nanstd(fitness_samples))
     if params['VERBOSE']:
         print(data)
     save_progress_to_file(data)
@@ -21,7 +21,10 @@ def save_progress_to_file(data):
 def save_step(generation, population):
     to_save = []
     for i in population:
-        to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist(), "mutation_prob": i["mutation_prob"]})
+        if params['ADAPTIVE_MUTATION']:
+            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist(), "mutation_prob": i["mutation_prob"]})
+        else:
+            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist()})
 
     open('%s/run_%d/iteration_%d.json' % (params['EXPERIMENT_NAME'], params['RUN'], generation), 'a').write(json.dumps(to_save))
 
