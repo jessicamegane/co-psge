@@ -1,20 +1,18 @@
-POPSIZE: 1000
-GENERATIONS: 50
-ELITISM: 100                   # number of individuals that survive
-PROB_CROSSOVER: 0.9
-PROB_MUTATION: 0.1
+POPSIZE: 200
+GENERATIONS: 300
+ELITISM: 20                   # number of individuals that survive
 TSIZE: 3
-GRAMMAR: 'grammars/boston_housing_grammar.pybnf'
-EXPERIMENT_NAME: 'dumps/Test'
-RUN: 3
-INCLUDE_GENOTYPE: True
+PROB_CROSSOVER: 0.9
+PROB_MUTATION: 0.05
+GRAMMAR: 'grammars/glucose_grammar_t_30.pybnf'
+EXPERIMENT_NAME: 'glucose_results/'
+INCLUDE_GENOTYPE: False
 SAVE_STEP: 1
 VERBOSE: True
 NORMAL_DIST_SD: 0.5
 PROB_MUTATION_GRAMMAR: 0.05
-PROB_MUTATION_PROBS: 0.3
 GAUSS_SD: 0.05
-MIN_TREE_DEPTH: 10
-MAX_TREE_DEPTH: 10
+MIN_TREE_DEPTH: 6
+MAX_TREE_DEPTH: 6
 NORMAL_DIST_SD: 0.5
 MUTATE_GRAMMAR: True
