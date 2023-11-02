@@ -400,7 +400,6 @@ ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
 python_filter = _inst.python_filter
 # get_non_recursive_productions = _inst.get_non_recursive_productions
-get_mutation_prob = _inst.get_mutation_prob
 
 if __name__ == "__main__":
     np.random.seed(42)
