@@ -26,7 +26,8 @@ params = {'PARAMETERS': None,
           'PROB_MUTATION_PROBS': 0.3,
           'GAUSS_SD': 0.01,
           'GRAMMAR_PROBS': None,
-          'MUTATE_GRAMMAR': True
+          'MUTATE_GRAMMAR': True,
+          'ADAPTIVE_MUTATION':False
           }
 
 
@@ -132,7 +133,10 @@ def set_parameters(arguments):
                         dest='MUTATE_GRAMMAR',
                         type=bool,
                         help='Specifies if we want the grammar to mutate')
-    
+    parser.add_argument('--adaptive_mutation',
+                        dest='ADAPTIVE_MUTATION',
+                        type=bool,
+                        help='Specifies if we want to use the traditional mutation or the Adaptive Facilitated Mutation')
     # Parse command line arguments using all above information.
     args, _ = parser.parse_known_args(arguments)
 
