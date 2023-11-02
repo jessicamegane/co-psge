@@ -6,22 +6,14 @@ In Co-PSGE each individual in the population is composed by a grammar and a geno
 
 A more in-depth explanation of the method and an analysis of its performance can be found in the [article](https://arxiv.org/pdf/2204.08985.pdf), published at the Genetic and Evolutionary Computation Conference 2022 (GECCO). If you use this code, a reference to the following work would be greatly appreciated:
 ```
-@inproceedings{10.1145/3512290.3528833,
+@inproceedings{megane2022copsge,
 author = {M\'{e}gane, Jessica and Louren\c{c}o, Nuno and Machado, Penousal},
 title = {Co-Evolutionary Probabilistic Structured Grammatical Evolution},
 year = {2022},
-isbn = {9781450392372},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/3512290.3528833},
 doi = {10.1145/3512290.3528833},
-abstract = {This work proposes an extension to Structured Grammatical Evolution (SGE) called Co-evolutionary Probabilistic Structured Grammatical Evolution (Co-PSGE). In Co-PSGE each individual in the population is composed by a grammar and a genotype, which is a list of dynamic lists, each corresponding to a non-terminal of the grammar containing real numbers that correspond to the probability of choosing a derivation rule. Each individual uses its own grammar to map the genotype into a program. During the evolutionary process, both the grammar and the genotype are subject to variation operators.The performance of the proposed approach is compared to 3 different methods, namely, Grammatical Evolution (GE), Probabilistic Grammatical Evolution (PGE), and SGE on four different benchmark problems. The results show the effectiveness of the approach since Co-PSGE is able to outperform all the methods with statistically significant differences in the majority of the problems.},
-booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference},
-pages = {991–999},
-numpages = {9},
-keywords = {grammar-based, coevolution, gaussian mutation, probabilistic algorithms},
-location = {Boston, Massachusetts},
-series = {GECCO '22}
 }
 
 ```
@@ -32,10 +24,54 @@ This code needs python3.5 or a newer version. More detail on the required librar
 
 ### Execution
 
-The folder `examples/` contains the code for some benchmark problems used in GP. To run, for example, Symbolic Regression, you can use the following command:
+Like all grammar-based Evolutionary Algorithms, to run the algorithm to solve a problem you need a **grammar** and a **fitness function**.
+The folder `examples/` contains the code for some benchmark problems used in Genetic Programming, and the folder ``grammars/`` contain the respective grammars. To run, for example, a Symbolic Regression problem, you can use the following command:
 
-```python3 -m examples.symreg --experiment_name dumps/example --seed 791021 --parameters parameters/standard.yml --grammars/regression.pybnf```
+```
+python3 -m examples.symreg --grammar grammars/regression.pybnf
+```
 
+#### Parameters
+
+The folder `parameters/` contains an example of standard parameters to run. You can define the parameters on a file and specify them when executing the code. For example:
+
+```
+python3 -m examples.symreg --grammar grammars/regression.pybnf --parameters parameters/standard.yml
+```
+
+You can also add manually more parameters when calling the code without changing the parameter file. Here is an example where we define the seed:
+
+```
+python3 -m examples.symreg --grammar grammars/regression.pybnf --parameters parameters/standard.yml --seed 123
+```
+
+Here is the list of possible parameters, and how to call them.
+
+| argument | type | description |
+| --------------- | ----------- | ------------ |
+| --parameters | str | Specifies the parameters file to be used. Must include the full file extension. | 
+| --popsize | int | Specifies the population size. |
+| --generations | int | Specifies the total number of generations.
+| --elitism | int | Specifies the total number of individuals that should survive in each generation. |
+| --prob_crossover | float | Specifies the probability of crossover usage. Float required. |
+| --prob_mutation | float | Specifies the probability of mutation usage. Float required. |
+| --tsize | int | Specifies the tournament size for parent selection. |
+| --min_tree_depth | int | Specifies the initialisation tree depth. |
+| --max_tree_depth | int | Specifies the maximum tree depth. |
+| --grammar | str | pecifies the path to the grammar file. |
+| --grammar_probs | str | Path to file that has a list of probabilities to initialisate the grammars. Otherwise it starts with uniform distribution for each non-terminal. Json file required. | 
+| --mutate_grammar | bool | Specifies if we want the grammars to mutate. |
+| --prob_mutation_grammar | float | Specifies the probability of occurring a mutation in the grammar of each individual. |
+| --normal_dist_sd | float | Specifies the value of the standard deviation used in the generation of a number with a normal distribution. |
+| --adaptive_mutation | bool | Specifies if we want to use the traditional mutation or the Adaptive Facilitated Mutation. |
+| --prob_mutation_probs | float | Specifies the probability of occurring a mutation in the prob mutation. Option only if --adaptive_mutation is set to true. |
+| --gauss_sd | float | Specifies the value of the standard deviation used in the generation of a number with a normal distribution. Option only if --adaptive_mutation is set to true. |
+| --experiment_name | str | Specifies the name of the folder where stats are going to be stored. |
+| --run | int | Specifies the run number. |
+| --seed | float | Specifies the seed to be used by the random number generator. |
+| --include_genotype | bool | Specifies if the genotype is to be included in the log files |
+| --save_step | int | Specifies how often stats are saved. |
+| --verbose | bool | Turns on the verbose output of the program. |
 
 
 ### Support
