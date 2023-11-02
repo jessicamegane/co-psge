@@ -31,6 +31,16 @@ def _inv_(x):
 def _sqrt_(x):
     return sqrt(abs(x))
 
+def _pow_(base, exponent):
+    try:
+        return base**exponent
+    except:
+        return 0
+
+def getcenterdistance(x,y, imgsize):
+    center = (int(imgsize[0]/2.0),
+              int(imgsize[1]/2.0))
+    return sqrt(pow(x-center[0],2) + pow(y-center[1],2)) / sqrt(pow(center[0],2) + pow(center[1],2))
 
 class Infix:
     def __init__(self, function):
