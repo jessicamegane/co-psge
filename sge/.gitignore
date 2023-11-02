@@ -10,3 +10,5 @@ mut_level_params/*
 mut_level/*
 mutation_level/*
 resources/glucose/*
+glucose_results/*
+GlucoseAbsysTest/*
