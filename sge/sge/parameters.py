@@ -55,16 +55,12 @@ def set_parameters(arguments):
                         help='Specifies the population size.')
     parser.add_argument('--generations',
                         dest='GENERATIONS',
-                        type=float,
+                        type=int,
                         help='Specifies the total number of generations.')
     parser.add_argument('--elitism',
                         dest='ELITISM',
                         type=int,
                         help='Specifies the total number of individuals that should survive in each generation.')
-    parser.add_argument('--seed',
-                        dest='SEED',
-                        type=float,
-                        help='Specifies the seed to be used by the random number generator.')
     parser.add_argument('--prob_crossover',
                         dest='PROB_CROSSOVER',
                         type=float,
@@ -85,10 +81,46 @@ def set_parameters(arguments):
                         dest='GRAMMAR_PROBS',
                         type=str,
                         help='Path to json file, with list of probabilities to each production rule.')
+    parser.add_argument('--min_tree_depth',
+                        dest='MIN_TREE_DEPTH',
+                        type=int,
+                        help='Specify the initialisation tree depth.')
+    parser.add_argument('--max_tree_depth',
+                        dest='MAX_TREE_DEPTH',
+                        type=int,
+                        help='Specify the initialisation tree depth.')
+    parser.add_argument('--mutate_grammar',
+                        dest='MUTATE_GRAMMAR',
+                        type=bool,
+                        help='Specifies if we want the grammar to mutate.')
+    parser.add_argument('--prob_mutation_grammar',
+                        dest='PROB_MUTATION_GRAMMAR',
+                        type=float,
+                        help='Specifies the probability of occurring a mutation in the individual grammar.')
+    parser.add_argument('--normal_dist_sd',
+                        dest='NORMAL_DIST_SD',
+                        type=float,
+                        help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution.')
+    parser.add_argument('--adaptive_mutation',
+                        dest='ADAPTIVE_MUTATION',
+                        type=bool,
+                        help='Specifies if we want to use the traditional mutation or the Adaptive Facilitated Mutation.')
+    parser.add_argument('--prob_mutation_probs',
+                        dest='PROB_MUTATION_PROBS',
+                        type=float,
+                        help='Specifies the probability of occurring a mutation in the prob mutation. Option only if --adaptive_mutation is set to true.')
+    parser.add_argument('--gauss_sd',
+                        dest='GAUSS_SD',
+                        type=float,
+                        help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution. Option only if --adaptive_mutation is set to true. ')
     parser.add_argument('--experiment_name',
                         dest='EXPERIMENT_NAME',
                         type=str,
-                        help='Specifies the name of the folder where stats are going to be stored')
+                        help='Specifies the name of the folder where stats are going to be stored.')
+    parser.add_argument('--seed',
+                        dest='SEED',
+                        type=float,
+                        help='Specifies the seed to be used by the random number generator.')
     parser.add_argument('--run',
                         dest='RUN',
                         type=int,
@@ -100,43 +132,11 @@ def set_parameters(arguments):
     parser.add_argument('--save_step',
                         dest='SAVE_STEP',
                         type=int,
-                        help='Specifies how often stats are saved')
+                        help='Specifies how often stats are saved.')
     parser.add_argument('--verbose',
                         dest='VERBOSE',
                         type=bool,
-                        help='Turns on the verbose output of the program')
-    parser.add_argument('--prob_mutation_grammar',
-                        dest='PROB_MUTATION_GRAMMAR',
-                        type=float,
-                        help='Specifies the probability of occurring a mutation in the individual grammar')
-    parser.add_argument('--normal_dist_sd',
-                        dest='NORMAL_DIST_SD',
-                        type=float,
-                        help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution')
-    parser.add_argument('--min_tree_depth',
-                        dest='MIN_TREE_DEPTH',
-                        type=int,
-                        help='Specify the initialisation tree depth')
-    parser.add_argument('--max_tree_depth',
-                        dest='MAX_TREE_DEPTH',
-                        type=int,
-                        help='Specify the initialisation tree depth')
-    parser.add_argument('--prob_mutation_probs',
-                        dest='PROB_MUTATION_PROBS',
-                        type=float,
-                        help='Specifies the probability of occurring a mutation in the prob mutation')
-    parser.add_argument('--gauss_sd',
-                        dest='GAUSS_SD',
-                        type=float,
-                        help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution')
-    parser.add_argument('--mutate_grammar',
-                        dest='MUTATE_GRAMMAR',
-                        type=bool,
-                        help='Specifies if we want the grammar to mutate')
-    parser.add_argument('--adaptive_mutation',
-                        dest='ADAPTIVE_MUTATION',
-                        type=bool,
-                        help='Specifies if we want to use the traditional mutation or the Adaptive Facilitated Mutation')
+                        help='Turns on the verbose output of the program.')
     # Parse command line arguments using all above information.
     args, _ = parser.parse_known_args(arguments)
 
