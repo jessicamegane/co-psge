@@ -84,7 +84,6 @@ def mutation_prob_mutation(ind):
     for p in gram:
         if np.random.uniform() < params['PROB_MUTATION_PROBS']:
             gauss = np.random.normal(0.0,params['GAUSS_SD'])
-            # TODO: no futuro criar bounds
             p = max(p+gauss,0)
             p = min(p,1)
         new_p.append(p)
@@ -117,9 +116,12 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             
             if params["MUTATE_GRAMMAR"]:
                 ni = mutationGrammar(ni)
-            ni = mutation_prob_mutation(ni)
-            # ni = mutate(ni, params['PROB_MUTATION'])
-            ni = mutate_level(ni)
+            if params['ADAPTIVE_MUTATION']:
+                # if we want to use Adaptive Facilitated Mutation
+                ni = mutation_prob_mutation(ni)
+                ni = mutate_level(ni)
+            else:
+                ni = mutate(ni, params['PROB_MUTATION'])
             new_population.append(ni)
 
         population = new_population
