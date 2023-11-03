@@ -46,6 +46,11 @@ You can also add manually more parameters when calling the code without changing
 python3 -m examples.symreg --grammar grammars/regression.pybnf --parameters parameters/standard.yml --seed 123
 ```
 
+If you need to know the possible parameters, you can use the flag ``--help``. For example:
+```
+python -m examples.symreg --help
+```
+
 Here is the list of possible parameters, and how to call them.
 
 | argument | type | description |
