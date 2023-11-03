@@ -22,7 +22,7 @@ def save_step(generation, population):
     to_save = []
     for i in population:
         if params['ADAPTIVE_MUTATION']:
-            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist(), "mutation_prob": i["mutation_prob"]})
+            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist(), "mutation_prob": i["mutation_probs"]})
         else:
             to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist()})
 

@@ -4,7 +4,7 @@ import sge.logger as logger
 from datetime import datetime
 from tqdm import tqdm
 from sge.operators.recombination import crossover
-from sge.operators.mutation import mutate, mutate_level
+from sge.operators.mutation import mutate, mutate_level, mutation_prob_mutation
 from sge.operators.selection import tournament
 from sge.parameters import (
     params,
@@ -58,6 +58,7 @@ def setup(parameters_file_path = None):
 
 
 def mutationGrammar(ind):
+    print(ind)
     ind['fitness'] = None
     gram = ind['pcfg']
     mask = copy.deepcopy(grammar.get_mask())
@@ -78,18 +79,6 @@ def mutationGrammar(ind):
                 gram[i,mask[i,:]] -= diff
                 gram[i,:] = np.clip(gram[i,:], 0, np.infty) / np.sum(np.clip(gram[i,:], 0, np.infty))
                 break
-    return ind
-
-def mutation_prob_mutation(ind):
-    mutation_probabilities = ind['mutation_probs']
-    new_p = []
-    for nt in mutation_probabilities:
-        if np.random.uniform() < params['PROB_MUTATION_PROBS']:
-            gauss = np.random.normal(0.0,params['GAUSS_SD'])
-            nt = max(nt+gauss,0)
-            nt = min(nt,1)
-        new_p.append(nt)
-    ind['mutation_probs'] = new_p
     return ind
 
 def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
@@ -118,6 +107,7 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             
             if params["MUTATE_GRAMMAR"]:
                 ni = mutationGrammar(ni)
+
             if params['ADAPTIVE_MUTATION']:
                 # if we want to use Adaptive Facilitated Mutation
                 ni = mutation_prob_mutation(ni)
@@ -125,8 +115,7 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             else:
                 ni = mutate(ni, params['PROB_MUTATION'])
                 
-            if params["MUTATE_GRAMMAR"]:
-                ni = mutationGrammar(ni)
+            
             new_population.append(ni)
 
         population = new_population
