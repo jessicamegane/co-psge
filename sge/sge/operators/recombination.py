@@ -7,11 +7,16 @@ def crossover(p1, p2):
     gen_size = len(p1['genotype'])
     mask = [np.random.uniform() for i in range(gen_size)]
     genotype = []
+    mutation_probs = []
     for index, prob in enumerate(mask):
         if prob < xover_p_value:
             genotype.append(p1['genotype'][index][:])
+            if params['ADAPTIVE_MUTATION']:
+                mutation_probs.append(p1['mutation_probs'][index])
         else:
             genotype.append(p2['genotype'][index][:])
+            if params['ADAPTIVE_MUTATION']:
+                mutation_probs.append(p2['mutation_probs'][index])
     mapping_values = [0] * gen_size
     # check parent with highest fitness
     # off spring inherits the grammar of the best fitted parent
@@ -19,9 +24,7 @@ def crossover(p1, p2):
     gram = p1['pcfg'] if p1['fitness'] < p2['fitness'] else p2['pcfg']
     _, tree_depth = grammar.mapping(genotype, gram, mapping_values)
 
-
     if params['ADAPTIVE_MUTATION']:
-        mutation_prob = p1['mutation_prob'] if p1['fitness'] < p2['fitness'] else p2['mutation_prob']    
-        return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'mutation_probs': mutation_prob}
+        return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram, 'mutation_probs': mutation_probs}
     else:
         return {'genotype': genotype, 'fitness': None, 'mapping_values': mapping_values, 'tree_depth': tree_depth, 'pcfg': gram}
