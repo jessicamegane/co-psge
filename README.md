@@ -4,7 +4,8 @@ Co-evolutionary Probabilistic Structured Grammatical Evolution (Co-PSGE) is an e
 
 In Co-PSGE each individual in the population is composed by a grammar and a genotype, which is a list of dynamic lists, each corresponding to a non-terminal of the grammar containing real numbers that correspond to the probability of choosing a derivation rule. Each individual uses its own grammar to map the genotype into a program. During the evolutionary process both the grammar and the genotype are subject to variation operators.
 
-A more in-depth explanation of the method and an analysis of its performance can be found in the [article](https://arxiv.org/pdf/2204.08985.pdf), published at the Genetic and Evolutionary Computation Conference 2022 (GECCO). If you use this code, a reference to the following work would be greatly appreciated:
+A more in-depth explanation of the method and an analysis of its performance can be found in the [article](https://jessicamegane.pt/files/gecco_copsge.pdf), published at the Genetic and Evolutionary Computation Conference 2022 (GECCO). If you use this code, a reference to the following work would be greatly appreciated:
+
 ```
 @inproceedings{megane2022copsge,
 author = {M\'{e}gane, Jessica and Louren\c{c}o, Nuno and Machado, Penousal},
@@ -73,6 +74,14 @@ Here is the list of possible parameters, and how to call them.
 | --save_step | int | Specifies how often stats are saved. |
 | --verbose | bool | Turns on the verbose output of the program. |
 
+### Mutation
+
+This code supports two types of mutations.
+
+- The *standard mutation* consists in changing the values in the genotype according to the **PROB_MUTATION** parameter.
+- The *adaptive facilitated mutation* can be enabled by setting the **ADAPTIVE_MUTATION** parameter to True. This mutation evolves different probabilities of mutation for each non-terminal of the grammar. Each individual contains a different array with probabilities of mutation for each non-terminal. The array starts with equal values for each non-terminal, pre-defined with the parameter **PROB_MUTATION**. They update each genaration based on the **PROB_MUTATION_PROBS** parameter, which defines the likelihood of the values suffering an alteration, and the **GAUSS_SD** parameter which defines the impact of those changes.
+The Adaptive Facilitated Mutation was publised and presented in the EuroGP 2023 conference, you can read the full paper [here](https://jessicamegane.pt/files/eurogp_afm.pdf). If you use this mutation please cite our paper.
+
 
 ### Support
 
@@ -88,3 +97,5 @@ Fenton, M., McDermott, J., Fagan, D., Forstenlechner, S., Hemberg, E., and O'Nei
 Lourenço, N., Assunção, F., Pereira, F. B., Costa, E., and Machado, P.. Structured Grammatical Evolution: A Dynamic Approach. In Handbook of Grammatical Evolution. Springer Int, 2018.
 
 Mégane, J., Lourenço, N., and Machado, P.. Probabilistic Grammatical Evolution. In Genetic Programming, Ting Hu, Nuno Lourenço, and Eric Medvet (Eds.). Springer International Publishing, Cham, 198–213, 2021.
+
+Carvalho, P., Mégane, J., Lourenço, N., Machado, P. (2023). Context Matters: Adaptive Mutation for Grammars. In: Pappa, G., Giacobini, M., Vasicek, Z. (eds) Genetic Programming. EuroGP 2023. Lecture Notes in Computer Science, vol 13986. Springer, Cham.
