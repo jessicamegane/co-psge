@@ -9,6 +9,7 @@ mut_level_parameters/*
 mut_level_params/*
 mut_level/*
 mutation_level/*
-resources/glucose/*
+resources/glucose/Horizon30/*
+resources/glucose/PatientsData/*
 glucose_results/*
 GlucoseAbsysTest/*
