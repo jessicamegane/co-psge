@@ -9,25 +9,25 @@ params = {'PARAMETERS': None,
           'POPSIZE': 10,
           'GENERATIONS': 10,
           'ELITISM': 10,                    # number of individuals that survive
-          'SEED': None,
           'PROB_CROSSOVER': 0.9,
           'PROB_MUTATION': 0.1,
           'TSIZE': 3,
+          'MIN_TREE_DEPTH': 6,
+          'MAX_TREE_DEPTH': 17,
           'GRAMMAR': 'grammars/regression.pybnf',
+          'GRAMMAR_PROBS': None,
           'EXPERIMENT_NAME': "dumps/Test",
+          'SEED': None,
           'RUN': 1,
           'INCLUDE_GENOTYPE': True,
           'SAVE_STEP': 1,
           'VERBOSE': True,
-          'MIN_TREE_DEPTH': 6,
-          'MAX_TREE_DEPTH': 17,
+          'MUTATE_GRAMMAR': True,
           'PROB_MUTATION_GRAMMAR': 0.05,
           'NORMAL_DIST_SD': 0.5,
+          'ADAPTIVE_MUTATION':False,
           'PROB_MUTATION_PROBS': 0.3,
           'GAUSS_SD': 0.01,
-          'GRAMMAR_PROBS': None,
-          'MUTATE_GRAMMAR': True,
-          'ADAPTIVE_MUTATION':False
           }
 
 
@@ -41,7 +41,7 @@ def set_parameters(arguments):
     # Initialise parser
     parser = argparse.ArgumentParser(
         usage=argparse.SUPPRESS,
-        description="Welcome to SGE3",
+        description="Welcome to Co-PSGE",
     )
     parser.add_argument('--parameters',
                         dest='PARAMETERS',
