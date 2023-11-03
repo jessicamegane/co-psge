@@ -6,7 +6,7 @@ import os
 
 def evolution_progress(generation, pop):
     fitness_samples = [i['fitness'] for i in pop]
-    data = '%4d\t%.6e\t%.6e\t%.6e' % (generation, np.min(fitness_samples), np.mean(fitness_samples), np.std(fitness_samples))
+    data = '%4d\t%.6e\t%.6e\t%.6e\t%.6e\t%.6e' % (generation, pop[0]['fitness'], np.mean(fitness_samples), np.std(fitness_samples),pop[0]['tree_depth'],pop[0]['other_info']['test_error'])
     if params['VERBOSE']:
         print(data)
     save_progress_to_file(data)

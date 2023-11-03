@@ -101,8 +101,6 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             if i['fitness'] is None:
                 evaluate(i, evaluation_function)      
         population.sort(key=lambda x: x['fitness'])
-
-        # logger saves the grammar of the best individual
         
         logger.evolution_progress(it, population)
 

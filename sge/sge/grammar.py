@@ -271,11 +271,14 @@ class Grammar:
                 # re-mapping with new probabilities                
                 codon = mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]][1]
                 if current_depth > self.max_depth:
+                    # print("entrou no max depth")
+                    # print("codon: ", codon)
                     prob_non_recursive = 0.0
                     for rule in self.shortest_path[(current_sym[0],'NT')][1:]:
                         index = self.grammar[current_sym[0]].index(rule)
-                        prob_non_recursive += self.pcfg[self.index_of_non_terminal[current_sym[0]],index]
+                        prob_non_recursive += gram[self.index_of_non_terminal[current_sym[0]],index]
                     prob_aux = 0.0
+                    # print("nova prob non recursive: ", prob_non_recursive)
                     for rule in self.shortest_path[(current_sym[0],'NT')][1:]:
                         index = self.grammar[current_sym[0]].index(rule)
                         if prob_non_recursive == 0.0: 
@@ -283,6 +286,7 @@ class Grammar:
                             new_prob = 1.0 / len(self.shortest_path[current_sym][1:])
                         else:
                             new_prob = gram[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
+                        # print("new_prob: ", new_prob)
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
@@ -295,6 +299,7 @@ class Grammar:
                             expansion_possibility = index
                             break
             # update mapping rules com a updated expansion possibility
+            # print("current depth: ", current_depth)
             mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility, codon]
             current_production = expansion_possibility
             positions_to_map[current_sym_pos] += 1
