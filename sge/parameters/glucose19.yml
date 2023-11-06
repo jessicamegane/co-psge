@@ -1,11 +1,11 @@
 POPSIZE: 200
-GENERATIONS: 300
+GENERATIONS: 250
 ELITISM: 20                   # number of individuals that survive
 TSIZE: 3
 PROB_CROSSOVER: 0.9
 PROB_MUTATION: 0.05
 GRAMMAR: grammars/glucose_grammar_t_120.pybnf
-EXPERIMENT_NAME: 'GlucoseAbsysTest/'
+EXPERIMENT_NAME: '/media/storage/jessica/GlucoseAbsysTest/'
 INCLUDE_GENOTYPE: False
 SAVE_STEP: 1
 VERBOSE: True
