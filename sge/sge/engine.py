@@ -37,14 +37,15 @@ def evaluate(ind, eval_func):
     ind['tree_depth'] = tree_depth
 
 
-def setup(parameters_file_path = None):
+def setup(parameters_file_path = None, file_name = None):
     if parameters_file_path is not None:
         load_parameters(file_name=parameters_file_path)
     set_parameters(sys.argv[1:])
     if params['SEED'] is None:
         params['SEED'] = int(datetime.now().microsecond)
     params['EXPERIMENT_NAME'] += "/" + str(params['PROB_MUTATION_GRAMMAR'] * 100) + "/" + str(params['NORMAL_DIST_SD'])
-    
+    if file_name:
+        params['EXPERIMENT_NAME'] += "/" + file_name 
     logger.prepare_dumps()
     np.random.seed(int(params['SEED']))
     grammar.set_path(params['GRAMMAR'])
@@ -91,8 +92,8 @@ def mutation_prob_mutation(ind):
     ind['mutation_prob'] = new_p
     return ind
 
-def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
-    setup(parameters_file_path=parameters_file)
+def evolutionary_algorithm(evaluation_function=None, parameters_file=None, file_name=None):
+    setup(parameters_file_path=parameters_file, file_name=file_name)
     population = list(make_initial_population())
     it = 0
 
