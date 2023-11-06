@@ -81,4 +81,5 @@ if __name__ == "__main__":
         start_test_set=start_test_set)
     sge.evolutionary_algorithm(
         evaluation_function=evaluation_function,
-        parameters_file="parameters/glucose19.yml")
+        parameters_file="parameters/glucose19.yml",
+        file_name=file_name)
