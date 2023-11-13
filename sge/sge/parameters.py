@@ -1,5 +1,6 @@
 import argparse
 import yaml
+from  distutils.util import strtobool
 '''
 This was adapted from PonyGE2: https://github.com/PonyGE/PonyGE2
 Fenton, M., McDermott, J., Fagan, D., Forstenlechner, S., Hemberg, E., and O'Neill, M. PonyGE2: Grammatical Evolution in Python. arXiv preprint, arXiv:1703.08535, 2017.
@@ -91,7 +92,7 @@ def set_parameters(arguments):
                         help='Specify the initialisation tree depth.')
     parser.add_argument('--mutate_grammar',
                         dest='MUTATE_GRAMMAR',
-                        type=bool,
+                        type=strtobool,
                         help='Specifies if we want the grammar to mutate.')
     parser.add_argument('--prob_mutation_grammar',
                         dest='PROB_MUTATION_GRAMMAR',
@@ -103,7 +104,7 @@ def set_parameters(arguments):
                         help='Specifies the value of the standard deviation used in the generation of a number with a normal distribution.')
     parser.add_argument('--adaptive_mutation',
                         dest='ADAPTIVE_MUTATION',
-                        type=bool,
+                        type=strtobool,
                         help='Specifies if we want to use the traditional mutation or the Adaptive Facilitated Mutation.')
     parser.add_argument('--prob_mutation_probs',
                         dest='PROB_MUTATION_PROBS',
@@ -127,7 +128,7 @@ def set_parameters(arguments):
                         help='Specifies the run number.')
     parser.add_argument('--include_genotype',
                         dest='INCLUDE_GENOTYPE',
-                        type=bool,
+                        type=strtobool,
                         help='Specifies if the genotype is to be include in the log files.')
     parser.add_argument('--save_step',
                         dest='SAVE_STEP',
@@ -135,7 +136,7 @@ def set_parameters(arguments):
                         help='Specifies how often stats are saved.')
     parser.add_argument('--verbose',
                         dest='VERBOSE',
-                        type=bool,
+                        type=strtobool,
                         help='Turns on the verbose output of the program.')
     # Parse command line arguments using all above information.
     args, _ = parser.parse_known_args(arguments)
