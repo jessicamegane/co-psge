@@ -73,6 +73,7 @@ if __name__ == "__main__":
     import sge.grammar as grammar
     import sge
     import sys
+    run = sys.argv[1]
     file_name = sys.argv[2]
     start_test_set = int(sys.argv[3])
     evaluation_function = GlucoseRegression(
@@ -82,4 +83,5 @@ if __name__ == "__main__":
     sge.evolutionary_algorithm(
         evaluation_function=evaluation_function,
         parameters_file="parameters/glucose19.yml",
-        file_name=file_name)
+        file_name=file_name,
+        run=run)
