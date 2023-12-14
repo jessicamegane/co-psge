@@ -18,7 +18,7 @@ def mutate(p, pmutation):
                 codon = np.random.normal(current_value[1], 0.5)
                 codon = min(codon,1.0)
                 codon = max(codon,0.0)
-                if p['tree_depth'] >= grammar.get_max_depth():
+                if p['tree_depth'] >= (grammar.get_max_depth() - grammar.get_shortest_path()[(nt,'NT')][0]):
                     prob_non_recursive = 0.0
                     for rule in grammar.get_shortest_path()[(nt,'NT')][1:]:
                         index = grammar.get_dict()[nt].index(rule)
