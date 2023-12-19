@@ -214,7 +214,7 @@ class Grammar:
                     expansion_possibility = index
                     break
 
-        genome[self.get_non_terminals().index(symbol)].append([expansion_possibility,codon])
+        genome[self.get_non_terminals().index(symbol)].append([expansion_possibility,codon,current_depth])
         expansion_symbols = self.grammar[symbol][expansion_possibility]
         depths = [current_depth]
         for sym in expansion_symbols:
@@ -266,7 +266,7 @@ class Grammar:
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
-                mapping_rules[current_sym_pos].append([expansion_possibility,codon])
+                mapping_rules[current_sym_pos].append([expansion_possibility,codon,current_depth])
             else:
                 # re-mapping with new probabilities                
                 codon = mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]][1]
@@ -300,7 +300,7 @@ class Grammar:
                             break
             # update mapping rules com a updated expansion possibility
             # print("current depth: ", current_depth)
-            mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility, codon]
+            mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility, codon, current_depth]
             current_production = expansion_possibility
             positions_to_map[current_sym_pos] += 1
             next_to_expand = choices[current_production]
