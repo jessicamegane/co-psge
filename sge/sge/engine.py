@@ -6,12 +6,12 @@ from tqdm import tqdm
 from sge.operators.recombination import crossover
 from sge.operators.mutation import mutate, mutate_level, mutation_prob_mutation
 from sge.operators.selection import tournament
+from sge.operators.update import grammar_mutation
 from sge.parameters import (
     params,
     set_parameters,
     load_parameters
 )
-import copy
 import numpy as np
 
 def generate_random_individual():
@@ -57,29 +57,7 @@ def setup(parameters_file_path = None):
     grammar.set_min_init_tree_depth(params['MIN_TREE_DEPTH'])
 
 
-def mutationGrammar(ind):
-    print(ind)
-    ind['fitness'] = None
-    gram = ind['pcfg']
-    mask = copy.deepcopy(grammar.get_mask())
-    rows, columns = gram.shape
-    for i in range(rows):
-        if np.count_nonzero(mask[i,:]) <= 1:
-            continue
-        for j in range(columns):
-            if not mask[i,j]:
-                continue
-            # mutation based on normal distribution
-            if np.random.uniform() < params['PROB_MUTATION_GRAMMAR']:
-                gauss = np.random.normal(0.0,params['NORMAL_DIST_SD'])
-                diff = (gauss / (np.count_nonzero(mask[i,:]) - 1))
 
-                gram[i,j] += gauss
-                mask[i,j] = False
-                gram[i,mask[i,:]] -= diff
-                gram[i,:] = np.clip(gram[i,:], 0, np.infty) / np.sum(np.clip(gram[i,:], 0, np.infty))
-                break
-    return ind
 
 def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
     setup(parameters_file_path=parameters_file)
@@ -106,7 +84,7 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
                 ni = tournament(population, params['TSIZE'])
             
             if params["MUTATE_GRAMMAR"]:
-                ni = mutationGrammar(ni)
+                ni = grammar_mutation(ni, params['PROB_MUTATION_GRAMMAR'], params['NORMAL_DIST_SD'])
 
             if params['ADAPTIVE_MUTATION']:
                 # if we want to use Adaptive Facilitated Mutation

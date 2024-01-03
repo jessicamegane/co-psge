@@ -24,7 +24,6 @@ class Grammar:
         self.max_init_depth = None
         self.max_number_prod_rules = 0
         self.pcfg = None
-        self.pcfg_mask = None
         self.pcfg_path = None
         self.index_of_non_terminal = {}
         self.shortest_path = {}
@@ -141,22 +140,28 @@ class Grammar:
         """
         assigns uniform probabilities to grammar
         """
-        array = np.zeros(shape=(len(self.grammar.keys()),self.max_number_prod_rules))
+        pcfg = []
         for i, nt in enumerate(self.grammar):
             number_probs = len(self.grammar[nt])
             prob = 1.0 / number_probs
-            array[i,:number_probs] = prob
+            array = np.repeat(prob, number_probs)
             if nt not in self.index_of_non_terminal:
                 self.index_of_non_terminal[nt] = i
-        self.pcfg = array
-        self.pcfg_mask = self.pcfg != 0
+            pcfg.append(array)
+        # array = np.zeros(shape=(len(self.grammar.keys()),self.max_number_prod_rules))
+        # for i, nt in enumerate(self.grammar):
+        #     number_probs = len(self.grammar[nt])
+        #     prob = 1.0 / number_probs
+        #     array[i,:number_probs] = prob
+        #     if nt not in self.index_of_non_terminal:
+        #         self.index_of_non_terminal[nt] = i
+        print(pcfg)
+        self.pcfg = pcfg
+        # self.pcfg_mask = self.pcfg != 0
 
 
     def generate_random_pcfg(self):
         pass
-
-    def get_mask(self):
-        return self.pcfg_mask
 
     def get_index_of_non_terminal(self):
         return self.index_of_non_terminal
@@ -191,29 +196,30 @@ class Grammar:
 
     def recursive_individual_creation(self, genome, symbol, current_depth, gram):
         codon = np.random.uniform()
-
-        if current_depth > self.max_init_depth:
+        nt_index = self.index_of_non_terminal[symbol]
+        shortest_path = self.shortest_path[(symbol,'NT')]
+        if current_depth > (self.max_init_depth - self.shortest_path[(symbol,'NT')][0]):
             prob_non_recursive = 0.0
-            for rule in self.shortest_path[(symbol,'NT')][1:]:
+            for rule in shortest_path[1:]:
                 index = self.grammar[symbol].index(rule)
-                prob_non_recursive += gram[self.index_of_non_terminal[symbol],index]
+                prob_non_recursive += gram[nt_index][index]
             prob_aux = 0.0
-            for rule in self.shortest_path[(symbol,'NT')][1:]:
+            for rule in shortest_path[1:]:
                 index = self.grammar[symbol].index(rule)
-                new_prob = gram[self.index_of_non_terminal[symbol],index] / prob_non_recursive
+                new_prob = gram[nt_index][index] / prob_non_recursive
                 prob_aux += new_prob
                 if codon <= round(prob_aux,3):
                     expansion_possibility = index
                     break
         else:
             prob_aux = 0.0
-            for index, option in enumerate(self.grammar[symbol]):
-                prob_aux += gram[self.index_of_non_terminal[symbol],index]
+            for index in range(len(self.grammar[symbol])):
+                prob_aux += gram[nt_index][index]
                 if codon <= round(prob_aux,3):
                     expansion_possibility = index
                     break
 
-        genome[self.get_non_terminals().index(symbol)].append([expansion_possibility,codon])
+        genome[self.get_non_terminals().index(symbol)].append([expansion_possibility,codon,current_depth])
         expansion_symbols = self.grammar[symbol][expansion_possibility]
         depths = [current_depth]
         for sym in expansion_symbols:
@@ -238,63 +244,65 @@ class Grammar:
         else:
             current_sym_pos = self.ordered_non_terminals.index(current_sym[0])
             choices = self.grammar[current_sym[0]]
+            shortest_path = self.shortest_path[current_sym]
+            nt_index = self.index_of_non_terminal[current_sym[0]]
             codon = np.random.uniform()
             if positions_to_map[current_sym_pos] >= len(mapping_rules[current_sym_pos]):
                 # Experiencia
-                if current_depth > self.max_depth:
+                if current_depth > (self.max_depth - shortest_path[0]):
                     prob_non_recursive = 0.0
-                    for rule in self.shortest_path[current_sym][1:]:
+                    for rule in shortest_path[1:]:
                         index = self.grammar[current_sym[0]].index(rule)
-                        prob_non_recursive += gram[self.index_of_non_terminal[current_sym[0]],index]
+                        prob_non_recursive += gram[nt_index][index]
                     prob_aux = 0.0
-                    for rule in self.shortest_path[current_sym][1:]:
+                    for rule in shortest_path[1:]:
                         index = self.grammar[current_sym[0]].index(rule)
                         if prob_non_recursive == 0.0: 
                             # when the probability of choosing the symbol is 0
-                            new_prob = 1.0 / len(self.shortest_path[current_sym][1:])
+                            new_prob = 1.0 / len(shortest_path[1:])
                         else:
-                            new_prob = gram[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
+                            new_prob = gram[nt_index][index] / prob_non_recursive
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
                 else:
                     prob_aux = 0.0
-                    for index, option in enumerate(self.grammar[current_sym[0]]):
-                        prob_aux += gram[self.index_of_non_terminal[current_sym[0]],index]
+                    for index in range(len(self.grammar[current_sym[0]])):
+                        prob_aux += gram[nt_index][index]
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
-                mapping_rules[current_sym_pos].append([expansion_possibility,codon])
+                mapping_rules[current_sym_pos].append([expansion_possibility,codon,current_depth])
             else:
                 # re-mapping with new probabilities                
                 codon = mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]][1]
-                if current_depth > self.max_depth:
+                if current_depth > (self.max_depth - shortest_path[0]):
                     prob_non_recursive = 0.0
-                    for rule in self.shortest_path[(current_sym[0],'NT')][1:]:
+                    for rule in shortest_path[1:]:
                         index = self.grammar[current_sym[0]].index(rule)
-                        prob_non_recursive += gram[self.index_of_non_terminal[current_sym[0]],index]
+                        prob_non_recursive += gram[nt_index][index]
                     prob_aux = 0.0
-                    for rule in self.shortest_path[(current_sym[0],'NT')][1:]:
+                    for rule in shortest_path[1:]:
                         index = self.grammar[current_sym[0]].index(rule)
                         if prob_non_recursive == 0.0: 
                             # when the probability of choosing the symbol is 0
-                            new_prob = 1.0 / len(self.shortest_path[current_sym][1:])
+                            new_prob = 1.0 / len(shortest_path[1:])
                         else:
-                            new_prob = gram[self.index_of_non_terminal[current_sym[0]],index] / prob_non_recursive
+                            new_prob = gram[nt_index][index] / prob_non_recursive
                         prob_aux += new_prob
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
                 else:
                     prob_aux = 0.0
-                    for index, option in enumerate(self.grammar[current_sym[0]]):
-                        prob_aux += gram[self.index_of_non_terminal[current_sym[0]],index]
+                    for index in range(len(self.grammar[current_sym[0]])):
+                        prob_aux += gram[nt_index][index]
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
             # update mapping rules com a updated expansion possibility
-            mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility, codon]
+            mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility,codon,current_depth]
             current_production = expansion_possibility
             positions_to_map[current_sym_pos] += 1
             next_to_expand = choices[current_production]
@@ -392,7 +400,6 @@ get_shortest_path = _inst.get_shortest_path
 get_non_recursive_options = _inst.get_non_recursive_options
 get_dict = _inst.get_dict
 get_pcfg = _inst.get_pcfg
-get_mask = _inst.get_mask
 get_index_of_non_terminal = _inst.get_index_of_non_terminal
 ordered_non_terminals = _inst.ordered_non_terminals
 max_init_depth = _inst.get_max_init_depth
