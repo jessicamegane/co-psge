@@ -3,6 +3,17 @@ from sge.parameters import params
 import json
 import os
 
+class NumpyEncoder(json.JSONEncoder):
+    """ Special json encoder for numpy types """
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
 
 def evolution_progress(generation, pop):
     fitness_samples = [i['fitness'] for i in pop]
@@ -22,11 +33,11 @@ def save_step(generation, population):
     to_save = []
     for i in population:
         if params['ADAPTIVE_MUTATION']:
-            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist(), "mutation_prob": i["mutation_probs"]})
+            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"], "mutation_prob": i["mutation_probs"]})
         else:
-            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"].tolist()})
+            to_save.append({"genotype": i['genotype'],"fitness": i['fitness'], "pcfg": i["pcfg"]})
 
-    open('%s/run_%d/iteration_%d.json' % (params['EXPERIMENT_NAME'], params['RUN'], generation), 'a').write(json.dumps(to_save))
+    open('%s/run_%d/iteration_%d.json' % (params['EXPERIMENT_NAME'], params['RUN'], generation), 'a').write(json.dumps(to_save, cls=NumpyEncoder))
 
 
 def save_parameters():
