@@ -26,8 +26,9 @@ class RRSE():
         self.criterion = torch.nn.MSELoss(reduction='sum')
         train_output_mean = torch.mean(train_set.target)
         self.__RRSE_train_denominator = self.criterion(train_set.target, train_output_mean)
-        test_output_mean = torch.mean(test_set.target)
-        self.__RRSE_test_denominator = self.criterion(test_set.target, test_output_mean)
+        if test_set:
+            test_output_mean = torch.mean(test_set.target)
+            self.__RRSE_test_denominator = self.criterion(test_set.target, test_output_mean)
 
     def calculate(self, predicted, dataset):
         pred_error = self.criterion(predicted, dataset.target)
@@ -54,7 +55,7 @@ class BostonHousing():
         self.run = run
         self.has_test_set = has_test_set
         self.read_dataset()
-        self.__loss_function = RMSE(self.__train_set, self.__test_set)
+        self.__loss_function = RRSE(self.__train_set, self.__test_set)
 
     def read_dataset(self):
         dataset = []
@@ -74,11 +75,8 @@ class BostonHousing():
 
 
     def get_error(self, dataset):
-        # pred_error = self.__loss_function(code)
-
         pred_error = 0.0
         try:
-            # predicted = np.apply_along_axis(function, 1, dataset)
             predicted = torch.vmap(
                 corre,
                 0)(dataset.values)
@@ -106,8 +104,9 @@ class BostonHousing():
 
         if self.__test_set:
             test_error = self.get_error(self.__test_set)
+            return (float(error.cpu().data.numpy()), {'generation': 0, "evals": 1, "test_error": float(test_error.cpu().data.numpy())})
 
-        return (float(error.cpu().data.numpy()), {'generation': 0, "evals": 1, "test_error": float(test_error.cpu().data.numpy())})
+        return (float(error.cpu().data.numpy()), {'generation': 0, "evals": 1, "test_error": test_error})
 
 
 if __name__ == "__main__":
