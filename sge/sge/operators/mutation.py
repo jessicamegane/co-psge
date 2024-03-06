@@ -21,22 +21,19 @@ def mutate(p, pmutation):
                 # gaussian mutation
                 codon = np.clip(np.random.normal(current_value[1], 0.5), 0.0, 1.0)
                 if current_depth >= (grammar.get_max_depth() - shortest_path[0]):
-                    prob_non_recursive = 0.0
-                    for rule in shortest_path[1:]:
-                        index = grammar.get_dict()[nt].index(rule)
-                        prob_non_recursive += p['pcfg'][nt_index][index]
-                    prob_aux = 0.0
-                    for rule in shortest_path[1:]:
-                        index = grammar.get_dict()[nt].index(rule)
-                        if prob_non_recursive == 0.0: 
-                            # when the probability of choosing the symbol is 0
-                            new_prob = 1.0 / len(shortest_path[1:])
-                        else:
-                            new_prob = p['pcfg'][nt_index][index] / prob_non_recursive
-                        prob_aux += new_prob
-                        if codon <= round(prob_aux,3):
-                            expansion_possibility = index
+                    prob = 0.0
+                    rule = shortest_path[np.random.randint(1, len(shortest_path))]
+                    index = grammar.get_dict()[nt].index(rule)
+                    if p['pcfg'][nt_index][index] == 0.0:
+                        continue
+                    k = 0
+                    for i in p['pcfg'][nt_index]:
+                        if k == index:
                             break
+                        prob += i
+                        k += 1
+                    codon = np.random.uniform(prob, prob + p['pcfg'][nt_index][index])
+                    expansion_possibility = index
                 else:
                     prob_aux = 0.0
                     for index in range(len(grammar.get_dict()[nt])):
