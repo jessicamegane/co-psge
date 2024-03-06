@@ -1,0 +1,9 @@
+#core
+<start> ::= <expr>
+<expr> ::= (<expr>+<expr>)\eb_div_\eb(<expr>+<expr>)|<expr>+<expr>|<expr>-<expr>|<expr>*<expr>|<expr>\eb_div_\eb<expr>|<c>|<c>.<c>|<c><c>.<c><c>|<var>|<var>|<expr><op><expr>|_pow_(<c>,<var>)|_exp_(abs(<c><op><var>))|_log_(abs(<c><op><var>))
+#Digits
+<c> ::= 0|1|2|3|4|5|6|7|8|9
+#Arithmetic operands 
+<op> ::= +|-|*|\eb_div_\eb
+# Input variables 
+<var> ::= x[0]|x[1]|x[2]
