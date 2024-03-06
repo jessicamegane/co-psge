@@ -246,8 +246,8 @@ class Grammar:
             choices = self.grammar[current_sym[0]]
             shortest_path = self.shortest_path[current_sym]
             nt_index = self.index_of_non_terminal[current_sym[0]]
-            codon = np.random.uniform()
             if positions_to_map[current_sym_pos] >= len(mapping_rules[current_sym_pos]):
+                codon = np.random.uniform()
                 # Experiencia
                 if current_depth > (self.max_depth - shortest_path[0]):
                     prob_non_recursive = 0.0
@@ -301,7 +301,7 @@ class Grammar:
                         if codon <= round(prob_aux,3):
                             expansion_possibility = index
                             break
-            # update mapping rules com a updated expansion possibility
+            # update mapping rules with the updated expansion possibility
             mapping_rules[current_sym_pos][positions_to_map[current_sym_pos]] = [expansion_possibility,codon,current_depth]
             current_production = expansion_possibility
             positions_to_map[current_sym_pos] += 1

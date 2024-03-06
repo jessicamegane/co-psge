@@ -85,7 +85,6 @@ def evolutionary_algorithm(evaluation_function=None, parameters_file=None):
             
             if params["MUTATE_GRAMMAR"]:
                 ni = grammar_mutation(ni, params['PROB_MUTATION_GRAMMAR'], params['NORMAL_DIST_SD'])
-
             if params['ADAPTIVE_MUTATION']:
                 # if we want to use Adaptive Facilitated Mutation
                 ni = mutation_prob_mutation(ni)
