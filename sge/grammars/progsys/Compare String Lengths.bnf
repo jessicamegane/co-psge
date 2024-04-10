@@ -1,0 +1,39 @@
+<predefined> ::= b0 = bool(); b1 = bool(); b2 = bool()\ni0 = int(); i1 = int(); i2 = int()\ns0 = str(); s1 = str(); s2 = str()\nres0 = bool()\n<code>
+<code> ::= <code><statement>\n|<statement>\n
+<statement> ::= <call>|<assign>|<compound_stmt>
+<compound_stmt> ::= <for>|<if>|loopBreak% = 0\nwhile <bool>:{:\n<code>\nif loopBreak% \g loopBreakConst or stop:{:\nbreak\n:}loopBreak% += 1\n:}
+<assign> ::= <bool_var> = <bool>|<int_assign>|<string_var> = <string>
+<for> ::= <for_iter_string>
+<call> ::= <assign>
+<in_list_comp_op> ::= in|not in
+<list_comp_op> ::= ==|!=
+<bool_var> ::= b0|b1|b2|res0
+<comp_op> ::= \l|\g|==|\ge|\le|!=
+<bool> ::= <bool_bool>|<bool_int>|<bool_string>
+<bool_int> ::= <int> <comp_op> <int>
+<bool_string> ::= <string> in <string>|<string> not in <string>|<string> == <string>|<string> != <string>|<string>.startswith(<string>)|<string>.endswith(<string>)
+<bool_bool> ::= <bool_var>|<bool_const>|not <bool>|( <bool> <bool_op> <bool> )
+<bool_op> ::= and|or
+<bool_const> ::= True|False
+<if> ::= if <bool>:{:\n<code>:}|if <bool>:{:\n<code>:}else:{:\n<code>:}
+<number> ::= <number><num>|<num>
+<num> ::= 0|1|2|3|4|5|6|7|8|9
+<int_var> ::= i0|i1|i2
+<int_assign> ::= <int_var> = <int>|<int_var> <arith_ops>= <int>
+<int> ::= <int_var>|int(<number>.0)|<int_operation>|<int_specialop>
+<int_operation> ::= ( <int> <arith_ops> <int> )|<int_arith_ops_protected>(<int>,<int>)
+<int_specialop> ::= min(<int>, <int>)|max(<int>, <int>)|abs(<int>)|len(<string>)|saveOrd(<string>)
+<arith_ops> ::= +|-|*
+<int_arith_ops_protected> ::= divInt|mod
+<string_var> ::= s0|s1|s2|in0|in1|in2
+<string_const_part> ::= <string_const_part><string_literal>|<string_literal>
+<for_iter_string> ::= loopBreak% = 0\nfor <string_var> in <string>:{:\n<code>\nif loopBreak% \g loopBreakConst or stop:{:\nbreak\n:}loopBreak% += 1\n:}
+<string> ::= <string_var>|""<string_const_part>""|<string_slice>|(<string> + <string>)|<string_specialop>
+<string_specialop> ::= getCharFromString(<string>, <int>)|saveChr(<int>)|<string>.capitalize()|<string_strip>
+<string_strip> ::= <string>.lstrip()|<string>.rstrip()|<string>.strip()|<string>.lstrip(<string>)|<string>.rstrip(<string>)|<string>.strip(<string>)
+<string_slice> ::= <string>[<int>:<int>]|<string>[:<int>]|<string>[<int>:]
+<string_literal> ::= <string_alpha_up>|<string_alpha_low>|<string_alpha_num>|<string_nonalphanum>
+<string_alpha_up> ::= A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
+<string_alpha_low> ::= a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z
+<string_alpha_num> ::= 0|1|2|3|4|5|6|7|8|9
+<string_nonalphanum> ::= |\\\n|\\\t| |!|"|#|$|%|&|"\\"|(|)|*|+|,|-|.|/|:|;|<|=|>|?|@|[|\\\\|]|^|_|`

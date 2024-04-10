@@ -1,0 +1,5 @@
+<predefined> ::= <bool>
+<bool> ::= <bool_bool>|<bool_int>|False|True
+<bool_int> ::=  False
+<bool_bool> ::= (<bool><bool_const><bool>)
+<bool_const> ::= True|False
