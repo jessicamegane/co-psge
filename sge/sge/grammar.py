@@ -234,7 +234,7 @@ class Grammar:
         max_depth = self._recursive_mapping(mapping_rules, positions_to_map, self.start_rule, 0, output, gram)
         output = "".join(output)
         if self.grammar_file.endswith("pybnf"):
-            output = self.python_filter(output)
+            output = self.python_filter(output, needs_python_filter)
         return output, max_depth
 
     def _recursive_mapping(self, mapping_rules, positions_to_map, current_sym, current_depth, output, gram):
@@ -333,7 +333,7 @@ class Grammar:
         return self.shortest_path
 
     @staticmethod
-    def python_filter(txt):
+    def python_filter(txt, needs_python_filter):
         """ Create correct python syntax.
         We use {: and :} as special open and close brackets, because
         it's not possible to specify indentation correctly in a BNF
@@ -343,21 +343,22 @@ class Grammar:
         txt = txt.replace("\l", "<")
         txt = txt.replace("\g", ">")
         txt = txt.replace("\eb", "|")
-        indent_level = 0
-        tmp = txt[:]
-        i = 0
-        while i < len(tmp):
-            tok = tmp[i:i+2]
-            if tok == "{:":
-                indent_level += 1
-            elif tok == ":}":
-                indent_level -= 1
-            tabstr = "\n" + "  " * indent_level
-            if tok == "{:" or tok == ":}" or tok == "\\n":
-                tmp = tmp.replace(tok, tabstr, 1)
-            i += 1
-            # Strip superfluous blank lines.
-            txt = "\n".join([line for line in tmp.split("\n") if line.strip() != ""])
+        if needs_python_filter:
+            indent_level = 0
+            tmp = txt[:]
+            i = 0
+            while i < len(tmp):
+                tok = tmp[i:i+2]
+                if tok == "{:":
+                    indent_level += 1
+                elif tok == ":}":
+                    indent_level -= 1
+                tabstr = "\n" + "  " * indent_level
+                if tok == "{:" or tok == ":}" or tok == "\\n":
+                    tmp = tmp.replace(tok, tabstr, 1)
+                i += 1
+                # Strip superfluous blank lines.
+                txt = "\n".join([line for line in tmp.split("\n") if line.strip() != ""])
         return txt
 
     def get_start_rule(self):
